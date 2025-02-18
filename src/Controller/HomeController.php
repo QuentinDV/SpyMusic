@@ -17,4 +17,5 @@ class HomeController extends AbstractController
 
         return new Response($contents);
     }
-}
+} 
+?> 
