@@ -1,3 +1,4 @@
 
 ###> symfony/framework-bundle ###
+/var/cache/*
 ###< symfony/framework-bundle ###
