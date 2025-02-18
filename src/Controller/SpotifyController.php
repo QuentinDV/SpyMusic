@@ -4,17 +4,17 @@ namespace App\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\Request;
-use App\Service\SpotifyAuth;
+use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Contracts\HttpClient\HttpClientInterface;
 
 class SpotifyController extends AbstractController
 {
-    private SpotifyAuth $spotifyAuth;
+    private HttpClientInterface $client;
 
-    public function __construct(SpotifyAuth $spotifyAuth)
+    public function __construct(HttpClientInterface $client)
     {
-        $this->spotifyAuth = $spotifyAuth;
+        $this->client = $client;
     }
 
     #[Route("/spotify", name: "spotify")]
@@ -22,61 +22,76 @@ class SpotifyController extends AbstractController
     {
         $clientId = $_ENV['SPOTIFY_CLIENT_ID'];
         $redirectUri = $_ENV['SPOTIFY_REDIRECT_URI'];
-        $scope = 'user-read-private user-read-email';
+        $scope = 'user-library-read'; // Permet de lire les albums sauvegardés par l'utilisateur
 
         $authUrl = "https://accounts.spotify.com/authorize?response_type=code&client_id=$clientId&redirect_uri=" . urlencode($redirectUri) . "&scope=" . urlencode($scope);
 
-        return $this->render('spotify/index.html.twig', [
+        $contents = $this->renderView('spotify/index.html.twig', [
             'authUrl' => $authUrl
         ]);
+
+        return new Response($contents);
     }
 
     #[Route("/spotify/callback", name: "spotify_callback")]
     public function callback(Request $request): Response
     {
         $code = $request->query->get('code');
+        $clientId = $_ENV['SPOTIFY_CLIENT_ID'];
+        $clientSecret = $_ENV['SPOTIFY_CLIENT_SECRET'];
+        $redirectUri = $_ENV['SPOTIFY_REDIRECT_URI'];
 
         if (!$code) {
-            return new Response('Code d\'autorisation manquant', Response::HTTP_BAD_REQUEST);
+            return new Response("Erreur: Aucun code reçu", Response::HTTP_BAD_REQUEST);
         }
 
-        // Récupération du token via le service
-        $tokens = $this->spotifyAuth->getAccessToken($code);
-        
-        // Stockage des tokens dans la session (à adapter selon ta gestion des utilisateurs)
-        $session = $request->getSession();
-        $session->set('access_token', $tokens['access_token']);
-        if ($tokens['refresh_token']) {
-            $session->set('refresh_token', $tokens['refresh_token']);
-        }
-
-        return new Response("Authentification réussie ! Token enregistré.");
-    }
-
-    #[Route("/spotify/profile", name: "spotify_profile")]
-    public function profile(Request $request): Response
-    {
-        $session = $request->getSession();
-        $accessToken = $session->get('access_token');
-        $refreshToken = $session->get('refresh_token');
-
-        if (!$accessToken) {
-            return new Response('Utilisateur non authentifié', Response::HTTP_UNAUTHORIZED);
-        }
-
-        // Vérification et mise à jour du token si nécessaire
-        $accessToken = $this->spotifyAuth->getValidAccessToken($accessToken, $refreshToken);
-        $session->set('access_token', $accessToken);
-
-        // Requête API Spotify pour récupérer le profil utilisateur
-        $response = $this->spotifyAuth->client->request('GET', 'https://api.spotify.com/v1/me', [
+        // Échange du code contre un token d'accès
+        $response = $this->client->request('POST', 'https://accounts.spotify.com/api/token', [
             'headers' => [
-                'Authorization' => 'Bearer ' . $accessToken,
+                'Authorization' => 'Basic ' . base64_encode("$clientId:$clientSecret"),
+                'Content-Type' => 'application/x-www-form-urlencoded'
             ],
+            'body' => [
+                'grant_type' => 'authorization_code',
+                'code' => $code,
+                'redirect_uri' => $redirectUri
+            ]
         ]);
 
         $data = $response->toArray();
+        $accessToken = $data['access_token'];
 
-        return $this->json($data);
+        $session = $request->getSession();
+        $session->set('spotify_access_token', $accessToken);
+
+        return $this->redirectToRoute('spotify_albums');
+    }
+
+    #[Route("/spotify/albums", name: "spotify_albums")]
+    public function getAlbums(Request $request): Response
+    {
+        $session = $request->getSession();
+        $accessToken = $session->get('spotify_access_token');
+
+        if (!$accessToken) {
+            return $this->redirectToRoute('spotify');
+        }
+
+        // Récupération des albums sauvegardés par l'utilisateur
+        $response = $this->client->request('GET', 'https://api.spotify.com/v1/me/albums', [
+            'headers' => [
+                'Authorization' => 'Bearer ' . $accessToken
+            ]
+        ]);
+
+        $albums = $response->toArray()['items'];
+
+        $contents = $this->renderView('spotify/albums.html.twig', [
+            'albums' => $albums
+        ]);
+
+        return new Response($contents);
     }
 }
+
+?>
