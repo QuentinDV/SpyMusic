@@ -26,11 +26,9 @@ class SpotifyController extends AbstractController
 
         $authUrl = "https://accounts.spotify.com/authorize?response_type=code&client_id=$clientId&redirect_uri=" . urlencode($redirectUri) . "&scope=" . urlencode($scope);
 
-        $contents = $this->renderView('spotify/index.html.twig', [
+        return $this->render('spotify/index.html.twig', [
             'authUrl' => $authUrl
         ]);
-
-        return new Response($contents);
     }
 
     #[Route("/spotify/callback", name: "spotify_callback")]
@@ -40,11 +38,11 @@ class SpotifyController extends AbstractController
         $clientId = $_ENV['SPOTIFY_CLIENT_ID'];
         $clientSecret = $_ENV['SPOTIFY_CLIENT_SECRET'];
         $redirectUri = $_ENV['SPOTIFY_REDIRECT_URI'];
-
+    
         if (!$code) {
             return new Response("Erreur: Aucun code reçu", Response::HTTP_BAD_REQUEST);
         }
-
+    
         // Échange du code contre un token d'accès
         $response = $this->client->request('POST', 'https://accounts.spotify.com/api/token', [
             'headers' => [
@@ -57,14 +55,52 @@ class SpotifyController extends AbstractController
                 'redirect_uri' => $redirectUri
             ]
         ]);
-
+    
         $data = $response->toArray();
         $accessToken = $data['access_token'];
-
+    
         $session = $request->getSession();
         $session->set('spotify_access_token', $accessToken);
-
-        return $this->redirectToRoute('spotify_albums');
+    
+        // 🔹 Redirection vers la page "/spotify/home"
+        return $this->redirectToRoute('spotify_home');
+    }
+    
+    #[Route("/spotify/home", name: "spotify_home")]
+    public function home(Request $request): Response
+    {
+        $session = $request->getSession();
+        $accessToken = $session->get('spotify_access_token');
+    
+        if (!$accessToken) {
+            return $this->redirectToRoute('spotify');
+        }
+    
+        // Récupération des albums sauvegardés par l'utilisateur
+        $albums = [];
+        try {
+            $response = $this->client->request('GET', 'https://api.spotify.com/v1/me/albums', [
+                'headers' => ['Authorization' => 'Bearer ' . $accessToken],
+            ]);
+            $albums = $response->toArray()['items'];
+        } catch (\Exception $e) {
+            // Gestion d'erreur si l'API ne répond pas
+        }
+    
+        // Données factices pour les recommandations
+        $recommendations = [
+            ['title' => 'Blinding Lights', 'artist' => 'The Weeknd', 'image' => 'https://via.placeholder.com/150'],
+            ['title' => 'Sicko Mode', 'artist' => 'Travis Scott', 'image' => 'https://via.placeholder.com/150'],
+            ['title' => 'Levitating', 'artist' => 'Dua Lipa', 'image' => 'https://via.placeholder.com/150'],
+            ['title' => 'Good 4 U', 'artist' => 'Olivia Rodrigo', 'image' => 'https://via.placeholder.com/150'],
+            ['title' => 'Stay', 'artist' => 'Justin Bieber', 'image' => 'https://via.placeholder.com/150'],
+            ['title' => 'Shivers', 'artist' => 'Ed Sheeran', 'image' => 'https://via.placeholder.com/150'],
+        ];
+    
+        return $this->render('spotify/home.html.twig', [
+            'albums' => $albums,
+            'recommendations' => $recommendations
+        ]);
     }
 
     #[Route("/spotify/albums", name: "spotify_albums")]
@@ -86,12 +122,8 @@ class SpotifyController extends AbstractController
 
         $albums = $response->toArray()['items'];
 
-        $contents = $this->renderView('spotify/albums.html.twig', [
+        return $this->render('spotify/albums.html.twig', [
             'albums' => $albums
         ]);
-
-        return new Response($contents);
     }
 }
-
-?>

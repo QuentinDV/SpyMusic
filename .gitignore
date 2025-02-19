@@ -1,5 +1,9 @@
 
 ###> symfony/framework-bundle ###
 /var/cache/*
+<<<<<<< HEAD
 /vendor/
+=======
+/vendor/*
+>>>>>>> 5e7bd530706ccf64000bc7a84c06c1a1597e25a3
 ###< symfony/framework-bundle ###

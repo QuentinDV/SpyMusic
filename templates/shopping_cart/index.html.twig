@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Shopping Cart - Skyrise Decor</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        }
+
+        body {
+            background: #fff;
+            color: #000;
+            line-height: 1.5;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        /* Header Styles */
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 1.25rem;
+            font-weight: 500;
+        }
+
+        .Profile {
+            padding: 0.5rem 1rem;
+            border: 1px solid #000;
+            border-radius: 20px;
+            background: transparent;
+            cursor: pointer;
+        }
+
+        .meenu {
+            padding: 0.5rem 1rem;
+            /* border-radius: 20px; */
+            background: transparent;
+            cursor: pointer;
+        }
+
+        /* Main Content */
+        .main-content {
+            display: grid;
+            grid-template-columns: 1fr 350px;
+            gap: 2rem;
+        }
+
+        h1 {
+            font-size: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        /* Cart Items */
+        .cart-items {
+            background: #f8f8f8;
+            border-radius: 1rem;
+            padding: 1.5rem;
+        }
+
+        .cart-header {
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr 0.5fr;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid #eee;
+            margin-bottom: 1rem;
+        }
+
+        .cart-item {
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr 0.5fr;
+            align-items: center;
+            padding: 1rem 0;
+            border-bottom: 1px solid #eee;
+        }
+
+        .product-info {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+        }
+
+        .product-image {
+            width: 80px;
+            height: 80px;
+            border-radius: 0.5rem;
+            object-fit: cover;
+        }
+
+        .quantity-controls {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            border: 1px solid #ddd;
+            border-radius: 20px;
+            padding: 0.25rem;
+            width: fit-content;
+        }
+
+        .quantity-btn {
+            border: none;
+            background: none;
+            cursor: pointer;
+            padding: 0.25rem 0.5rem;
+            font-size: 1rem;
+        }
+
+        /* Order Summary */
+        .order-summary {
+            background: #f8f8f8;
+            border-radius: 1rem;
+            padding: 1.5rem;
+        }
+
+        .voucher-input {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .voucher-input input {
+            flex: 1;
+            padding: 0.5rem 1rem;
+            border: 1px solid #ddd;
+            border-radius: 20px;
+        }
+
+        .apply-btn {
+            padding: 0.5rem 1rem;
+            border: 1px solid #000;
+            border-radius: 20px;
+            background: transparent;
+            cursor: pointer;
+        }
+
+        .price-breakdown {
+            margin-bottom: 1.5rem;
+        }
+
+        .price-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 0.5rem;
+        }
+
+        .checkout-btn {
+            width: 100%;
+            padding: 1rem;
+            background: #000;
+            color: #fff;
+            border: none;
+            border-radius: 0.5rem;
+            cursor: pointer;
+            font-weight: 500;
+        }
+
+        /* Footer */
+        footer {
+            margin-top: 4rem;
+            padding-top: 2rem;
+            border-top: 1px solid #eee;
+        }
+
+        .social-links {
+            display: flex;
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .social-link {
+            padding: 0.5rem 1rem;
+            border: 1px solid #000;
+            border-radius: 20px;
+            text-decoration: none;
+            color: #000;
+        }
+
+        .delete-btn {
+            background: none;
+            border: none;
+            cursor: pointer;
+            color: #666;
+        }
+
+        .warranty-info {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.875rem;
+            color: #666;
+            margin: 1rem 0;
+        }
+        
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="logo">
+                <span class="meenu"> <a href="" > </a>☰</a></span>
+                <span class="meenu"><a href="" > SpyMusic</a></span>
+            </div>
+            <button class="meenu">Profile</button>
+        </header>
+        
+        <h1>Your Shopping Cart</h1>
+
+        <div class="main-content">
+            <div class="cart-items">
+                <div class="cart-header">
+                    <span>Product Code</span>
+                    <span>Quantity</span>
+                    <span>Total</span>
+                    <span>Action</span>
+                </div>
+
+                <div class="cart-item">
+                    <div class="product-info">
+                        <img src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/image-5t2Q2eWRqekLpmQKxr8EsqZ1iRJ7jQ.png" alt="Furniture Set" class="product-image">
+                        <div>
+                            <h3>Furniture Set</h3>
+                            <p>nom du produit</p>
+                        </div>
+                    </div>
+                    <div class="quantity-controls">
+                        <button class="quantity-btn" onclick="updateQuantity(this, -1)">-</button>
+                        <span class="quantity">4</span>
+                        <button class="quantity-btn" onclick="updateQuantity(this, 1)">+</button>
+                    </div>
+                    <span class="total-price">$437</span>
+                    <button class="delete-btn">🗑</button>
+                </div>
+
+                <!-- Repeat similar structure for other items -->
+            </div>
+
+            <div class="order-summary">
+                <h2>Order Summary</h2>
+                <div class="voucher-input">
+                    <input type="text" placeholder="Discount voucher">
+                    <button class="apply-btn">Apply</button>
+                </div>
+
+                <div class="price-breakdown">
+                    <div class="price-row">
+                        <span>Sub Total</span>
+                        <span>0000 USD</span>
+                    </div>
+                    <div class="price-row">
+                        <span>0000 USD</span>
+                    </div>
+                    <div class="price-row">
+                        <span>Delivery fee</span>
+                        <span>0000 USD</span>
+                    </div>
+                    <div class="price-row">
+                        <strong>Total</strong>
+                        <strong>$0000 USD</strong>
+                    </div>
+                </div>
+
+                <div class="warranty-info">
+                    <span>⭐</span>
+                    <span>90 Day Limited Warranty against manufacturer's defects</span>
+                </div>
+
+                <button class="checkout-btn">Checkout Now</button>
+            </div>
+        </div>
+
+        <footer>
+            <h2>Craft Own Furniture</h2>
+            <p>Build custom furniture</p>
+            
+            <div class="social-links">
+                <a href="#" class="social-link">Facebook</a>
+                <a href="#" class="social-link">Instagram</a>
+                <a href="#" class="social-link">Twitter</a>
+                <a href="#" class="social-link">LinkedIn</a>
+            </div>
+        </footer>
+    </div>
+    <script>
+        function updateQuantity(button, change) {
+            let quantitySpan = button.parentElement.querySelector('.quantity');
+            let currentQuantity = parseInt(quantitySpan.textContent);
+            let newQuantity = currentQuantity + change;
+
+            if (newQuantity > 0) {
+                quantitySpan.textContent = newQuantity;
+            }
+        }
+    </script>
+</body>
+</html>

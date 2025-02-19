@@ -1,0 +1,195 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}🏠 Accueil | Spotify{% endblock %}
+
+{% block stylesheets %}
+<style>
+    body {
+        background-color: #121212;
+        color: #fff;
+        font-family: Arial, sans-serif;
+    }
+    .main-container {
+        display: flex;
+        max-width: 1400px;
+        margin: auto;
+        padding: 20px;
+    }
+
+    /* ---- Bibliothèque (gauche) ---- */
+    .sidebar {
+        width: 300px;
+        background: #000;
+        padding: 20px;
+        border-radius: 10px;
+        height: 85vh;
+        overflow-y: auto;
+    }
+    .sidebar h2 {
+        font-size: 1.3rem;
+        color: #1DB954;
+        margin-bottom: 15px;
+    }
+    .album-list {
+        list-style: none;
+        padding: 0;
+    }
+    .album-list li {
+        display: flex;
+        align-items: center;
+        padding: 10px;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: background 0.3s ease;
+    }
+    .album-list li:hover {
+        background: #282828;
+    }
+    .album-list img {
+        width: 50px;
+        height: 50px;
+        border-radius: 5px;
+        margin-right: 10px;
+    }
+    .album-info {
+        flex-grow: 1;
+    }
+    .album-info h4 {
+        font-size: 0.9rem;
+        margin: 0;
+    }
+    .album-info p {
+        font-size: 0.8rem;
+        color: #b3b3b3;
+        margin: 0;
+    }
+
+    /* ---- Contenu principal (droite) ---- */
+    .content {
+        flex-grow: 1;
+        margin-left: 20px;
+    }
+    .banner {
+        background: linear-gradient(45deg, #333, #1DB954);
+        padding: 20px;
+        border-radius: 10px;
+        text-align: center;
+    }
+    .banner h1 {
+        font-size: 2rem;
+        margin: 0;
+    }
+
+    /* ---- Catégories ---- */
+    .categories {
+        margin-top: 30px;
+    }
+    .categories h2 {
+        font-size: 1.5rem;
+        margin-bottom: 15px;
+    }
+    .category-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+        gap: 15px;
+    }
+    .category {
+        background: #282828;
+        padding: 15px;
+        border-radius: 10px;
+        text-align: center;
+        cursor: pointer;
+        transition: transform 0.3s ease, background 0.3s ease;
+    }
+    .category:hover {
+        background: #1DB954;
+        transform: translateY(-5px);
+    }
+
+    /* ---- Recommandations ---- */
+    .recommendations {
+        margin-top: 30px;
+    }
+    .recommendations h2 {
+        font-size: 1.5rem;
+        margin-bottom: 15px;
+    }
+    .rec-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+        gap: 15px;
+    }
+    .rec-item {
+        background: #282828;
+        padding: 15px;
+        border-radius: 10px;
+        text-align: center;
+        cursor: pointer;
+        transition: transform 0.3s ease;
+    }
+    .rec-item:hover {
+        transform: scale(1.05);
+    }
+    .rec-item img {
+        width: 100%;
+        border-radius: 10px;
+        margin-bottom: 10px;
+    }
+</style>
+{% endblock %}
+
+{% block body %}
+<div class="main-container">
+    <!-- Sidebar - Bibliothèque -->
+    <aside class="sidebar">
+        <h2>📚 Ma Bibliothèque</h2>
+        <ul class="album-list">
+            {% for item in albums %}
+                <li>
+                    <img src="{{ item.album.images[0].url }}" alt="{{ item.album.name }}">
+                    <div class="album-info">
+                        <h4>{{ item.album.name }}</h4>
+                        <p>{{ item.album.artists[0].name }}</p>
+                    </div>
+                </li>
+            {% endfor %}
+        </ul>
+    </aside>
+
+    <!-- Contenu Principal -->
+    <section class="content">
+        <!-- Bannière de Bienvenue -->
+        <div class="banner">
+            <h1>🎵 Bienvenue sur Spotify</h1>
+            <p>Découvrez de nouvelles musiques et écoutez vos albums préférés !</p>
+        </div>
+
+        <!-- Catégories -->
+        <div class="categories">
+            <h2>🎶 Parcourir par Genre</h2>
+            <div class="category-grid">
+                <div class="category">🎤 Rap</div>
+                <div class="category">🎸 Rock</div>
+                <div class="category">🎷 Jazz</div>
+                <div class="category">🎻 Classique</div>
+                <div class="category">🎧 Électro</div>
+                <div class="category">🎶 Pop</div>
+            </div>
+        </div>
+
+        <!-- Recommandations -->
+        <div class="recommendations">
+            <h2>🔥 Recommandé pour Vous</h2>
+            <div class="rec-grid">
+                {% for rec in recommendations %}
+                    <div class="rec-item">
+                        <img src="{{ rec.image }}" alt="{{ rec.title }}">
+                        <h4>{{ rec.title }}</h4>
+                        <p>{{ rec.artist }}</p>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+    </section>
+</div>
+{% endblock %}
