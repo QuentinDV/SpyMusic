@@ -1,17 +1,84 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Mes Albums Spotify{% endblock %}
+{% block title %}🎵 Mes Albums Spotify{% endblock %}
+
+{% block stylesheets %}
+<style>
+    body {
+        background-color: #121212;
+        color: #fff;
+        font-family: Arial, sans-serif;
+    }
+    .container {
+        max-width: 1100px;
+        margin: auto;
+        padding: 20px;
+    }
+    h1 {
+        text-align: center;
+        margin-bottom: 30px;
+        font-size: 2rem;
+        color: #1DB954;
+    }
+    .album-container {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 20px;
+        justify-content: center;
+    }
+    .album {
+        background: #282828;
+        border-radius: 10px;
+        padding: 15px;
+        text-align: center;
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+    .album:hover {
+        transform: translateY(-5px);
+        box-shadow: 0px 4px 10px rgba(255, 255, 255, 0.2);
+    }
+    .album img {
+        width: 100%;
+        border-radius: 10px;
+        margin-bottom: 10px;
+    }
+    .album h3 {
+        font-size: 1.1rem;
+        margin: 5px 0;
+    }
+    .album p {
+        font-size: 0.9rem;
+        color: #b3b3b3;
+    }
+    .btn-spotify {
+        display: inline-block;
+        margin-top: 10px;
+        padding: 8px 15px;
+        background: #1DB954;
+        color: #fff;
+        border-radius: 20px;
+        text-decoration: none;
+        font-weight: bold;
+        transition: background 0.3s ease;
+    }
+    .btn-spotify:hover {
+        background: #18a848;
+    }
+</style>
+{% endblock %}
 
 {% block body %}
-    <h1>Mes Albums Spotify</h1>
-    <div class="album-container">
-        {% for item in albums %}
-            <div class="album">
-                <img src="{{ item.album.images[0].url }}" alt="{{ item.album.name }}" width="150">
-                <h3>{{ item.album.name }}</h3>
-                <p>Artiste : {{ item.album.artists[0].name }}</p>
-                <a href="{{ item.album.external_urls.spotify }}" target="_blank">Écouter sur Spotify</a>
-            </div>
-        {% endfor %}
+    <div class="container">
+        <h1>🎶 Mes Albums Spotify</h1>
+        <div class="album-container">
+            {% for item in albums %}
+                <div class="album">
+                    <img src="{{ item.album.images[0].url }}" alt="{{ item.album.name }}">
+                    <h3>{{ item.album.name }}</h3>
+                    <p>🎤 {{ item.album.artists[0].name }}</p>
+                    <a href="{{ item.album.external_urls.spotify }}" target="_blank" class="btn-spotify">🎧 Écouter</a>
+                </div>
+            {% endfor %}
+        </div>
     </div>
 {% endblock %}
