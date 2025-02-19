@@ -7,7 +7,7 @@ security:
   providers:
     app_user_provider:
       entity:
-        class: App\Entity\Users # Utilisation de ta classe Users
+        class: App\Entity\Users
         property: email # La propriété unique pour identifier l'utilisateur (email)
 
   # Définition des firewalls
@@ -22,6 +22,7 @@ security:
       form_login:
         login_path: login # Chemin pour afficher le formulaire de connexion
         check_path: login # Chemin pour soumettre les informations de connexion
+        username_parameter: email # Remplacer '_username' par 'email'
         default_target_path: home # Page de redirection après connexion
       logout:
         path: logout # Chemin pour se déconnecter

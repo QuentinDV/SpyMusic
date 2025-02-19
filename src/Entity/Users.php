@@ -10,42 +10,22 @@ use Symfony\Component\Security\Core\User\UserInterface;
 #[ORM\Entity(repositoryClass: UserRepository::class)]
 #[ORM\Table(name: '`users`')]
 #[ORM\UniqueConstraint(name: 'UNIQ_IDENTIFIER_EMAIL', fields: ['email'])]
+#[ORM\UniqueConstraint(name: 'UNIQ_IDENTIFIER_USERNAME', fields: ['username'])]
 class Users implements UserInterface, PasswordAuthenticatedUserInterface
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column(type: 'integer')]
-    private ?int $id = null;
+    private ?int $userId = null;
 
-    #[ORM\Column(length: 180, unique: true)]
+    #[ORM\Column(length: 255, unique: true)]
+    private ?string $username = null;
+
+    #[ORM\Column(length: 255, unique: true)]
     private ?string $email = null;
 
-    #[ORM\Column(type: 'json')]
-    private array $roles = [];
-
-    #[ORM\Column(type: 'string')]
-    private ?string $password = null;
-
-    #[ORM\Column(length: 100)]
-    private ?string $firstName = null;
-
-    #[ORM\Column(length: 100)]
-    private ?string $lastName = null;
-
-    #[ORM\Column(length: 255, nullable: true)]
-    private ?string $address = null;
-
-    #[ORM\Column(length: 100, nullable: true)]
-    private ?string $city = null;
-
-    #[ORM\Column(length: 20, nullable: true)]
-    private ?string $postalCode = null;
-
-    #[ORM\Column(length: 100, nullable: true)]
-    private ?string $country = null;
-
-    #[ORM\Column(length: 20, nullable: true)]
-    private ?string $phoneNumber = null;
+    #[ORM\Column(length: 255)]
+    private ?string $passwordHash = null;
 
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $accessToken = null;
@@ -53,13 +33,29 @@ class Users implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $refreshToken = null;
 
-    // Getter et setter pour l'ID
-    public function getId(): ?int
+    #[ORM\Column(type: 'string', length: 20, nullable: true)]
+    private ?string $role = 'client';  // Valeur par défaut 'client'
+
+
+    // Getter et setter pour userId
+    public function getUserId(): ?int
     {
-        return $this->id;
+        return $this->userId;
     }
 
-    // Getter et setter pour l'email
+    // Getter et setter pour username
+    public function getUsername(): ?string
+    {
+        return $this->username;
+    }
+
+    public function setUsername(string $username): static
+    {
+        $this->username = $username;
+        return $this;
+    }
+
+    // Getter et setter pour email
     public function getEmail(): ?string
     {
         return $this->email;
@@ -77,33 +73,15 @@ class Users implements UserInterface, PasswordAuthenticatedUserInterface
         return (string) $this->email;
     }
 
-    // Gestion des rôles
-    public function getRoles(): array
-    {
-        $roles = $this->roles;
-        // Assurer que le rôle "ROLE_USER" est toujours inclus
-        if (!in_array('ROLE_USER', $roles, true)) {
-            $roles[] = 'ROLE_USER';
-        }
-
-        return array_unique($roles);
-    }
-
-    public function setRoles(array $roles): static
-    {
-        $this->roles = $roles;
-        return $this;
-    }
-
-    // Getter et setter pour le mot de passe
+    // Getter et setter pour passwordHash
     public function getPassword(): ?string
     {
-        return $this->password;
+        return $this->passwordHash;
     }
 
-    public function setPassword(string $password): static
+    public function setPassword(string $passwordHash): static
     {
-        $this->password = $password;
+        $this->passwordHash = $passwordHash;
         return $this;
     }
 
@@ -113,91 +91,7 @@ class Users implements UserInterface, PasswordAuthenticatedUserInterface
         // Ici, on n'a rien à effacer d'autre que le mot de passe
     }
 
-    // Getters et setters pour le prénom
-    public function getFirstName(): ?string
-    {
-        return $this->firstName;
-    }
-
-    public function setFirstName(string $firstName): static
-    {
-        $this->firstName = $firstName;
-        return $this;
-    }
-
-    // Getters et setters pour le nom
-    public function getLastName(): ?string
-    {
-        return $this->lastName;
-    }
-
-    public function setLastName(string $lastName): static
-    {
-        $this->lastName = $lastName;
-        return $this;
-    }
-
-    // Getters et setters pour l'adresse
-    public function getAddress(): ?string
-    {
-        return $this->address;
-    }
-
-    public function setAddress(?string $address): static
-    {
-        $this->address = $address;
-        return $this;
-    }
-
-    // Getters et setters pour la ville
-    public function getCity(): ?string
-    {
-        return $this->city;
-    }
-
-    public function setCity(?string $city): static
-    {
-        $this->city = $city;
-        return $this;
-    }
-
-    // Getters et setters pour le code postal
-    public function getPostalCode(): ?string
-    {
-        return $this->postalCode;
-    }
-
-    public function setPostalCode(?string $postalCode): static
-    {
-        $this->postalCode = $postalCode;
-        return $this;
-    }
-
-    // Getters et setters pour le pays
-    public function getCountry(): ?string
-    {
-        return $this->country;
-    }
-
-    public function setCountry(?string $country): static
-    {
-        $this->country = $country;
-        return $this;
-    }
-
-    // Getters et setters pour le numéro de téléphone
-    public function getPhoneNumber(): ?string
-    {
-        return $this->phoneNumber;
-    }
-
-    public function setPhoneNumber(?string $phoneNumber): static
-    {
-        $this->phoneNumber = $phoneNumber;
-        return $this;
-    }
-
-    // Getters et setters pour les tokens
+    // Getter et setter pour accessToken
     public function getAccessToken(): ?string
     {
         return $this->accessToken;
@@ -209,6 +103,7 @@ class Users implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
+    // Getter et setter pour refreshToken
     public function getRefreshToken(): ?string
     {
         return $this->refreshToken;
@@ -218,5 +113,23 @@ class Users implements UserInterface, PasswordAuthenticatedUserInterface
     {
         $this->refreshToken = $refreshToken;
         return $this;
+    }
+
+    // Getter et setter pour role
+    public function getRole(): ?string
+    {
+        return $this->role;
+    }
+
+    public function setRole(?string $role): static
+    {
+        $this->role = $role;
+        return $this;
+    }
+
+    // Implémentation des rôles (méthode exigée par UserInterface)
+    public function getRoles(): array
+    {
+        return [$this->role];  // Le rôle est soit 'client' soit 'admin'
     }
 }

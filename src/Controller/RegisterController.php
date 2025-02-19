@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Controller;
 
 use App\Entity\Users;
@@ -32,25 +33,25 @@ class RegisterController extends AbstractController
         $users = new Users();
         $form = $this->createForm(RegistrationFormType::class, $users);
         $form->handleRequest($request);
-
+    
         if ($form->isSubmitted() && $form->isValid()) {
             // Assurez-vous que les champs sont bien renseignés
-            $users->setFirstName($form->get('first_name')->getData());
-            $users->setLastName($form->get('last_name')->getData());
 
+            $users->setUsername($form->get('username')->getData()); // Ajoutez ceci pour set le username
+    
             // Hachage du mot de passe
             $users->setPassword(
                 $passwordHasher->hashPassword($users, $form->get('password')->getData())
             );
-
+    
             // Sauvegarde en base de données
             $entityManager->persist($users);
             $entityManager->flush();
-
+    
             // Connexion automatique après inscription
             return $this->userAuthenticator->authenticateUser($users, $this->authenticator, $request);
         }
-
+    
         return $this->render('register/register.html.twig', [
             'registrationForm' => $form->createView(),
         ]);
