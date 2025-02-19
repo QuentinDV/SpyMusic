@@ -50,6 +50,13 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(length: 20, nullable: true)]
     private ?string $phoneNumber = null;
 
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $accessToken = null;
+
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $refreshToken = null;
+
+
     public function getId(): ?int
     {
         return $this->id;
@@ -188,4 +195,27 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         $this->role = $role;
         return $this;
     }
+
+    public function getAccessToken(): ?string
+    {
+        return $this->accessToken;
+    }
+
+    public function setAccessToken(?string $accessToken): static
+    {
+        $this->accessToken = $accessToken;
+        return $this;
+    }
+
+    public function getRefreshToken(): ?string
+    {
+        return $this->refreshToken;
+    }
+
+    public function setRefreshToken(?string $refreshToken): static
+    {
+        $this->refreshToken = $refreshToken;
+        return $this;
+    }
+
 }

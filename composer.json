@@ -8,7 +8,8 @@
         "ext-ctype": "*",
         "ext-iconv": "*",
         "doctrine/doctrine-migrations-bundle": "^3.4",
-        "easycorp/easyadmin-bundle": "^4.24",
+        "doctrine/orm": "*",
+        "paypal/rest-api-sdk-php": "*",
         "symfony/console": "7.2.*",
         "symfony/dotenv": "7.2.*",
         "symfony/flex": "^2",
@@ -16,6 +17,7 @@
         "symfony/http-client": "7.2.*",
         "symfony/runtime": "7.2.*",
         "symfony/security-bundle": "7.2.*",
+        "symfony/twig-bundle": "7.2.*",
         "symfony/yaml": "7.2.*"
     },
     "config": {
