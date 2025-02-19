@@ -9,6 +9,7 @@ parameters:
   PAYPAL_MODE: "%env(PAYPAL_MODE)%"
 
 services:
+  Symfony\Component\Security\Http\Authenticator\FormLoginAuthenticator: "@security.authenticator.form_login.main"
   App\Service\DeezerService:
     arguments:
       $client: "@http_client"

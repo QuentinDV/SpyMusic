@@ -1,0 +1,12 @@
+{% block body %}
+    <h1>Inscription</h1>
+    {{ form_start(registrationForm) }}
+        {{ form_row(registrationForm.email) }}
+        {{ form_row(registrationForm.first_name) }}
+        {{ form_row(registrationForm.last_name) }}
+
+        {{ form_row(registrationForm.password.first) }}  {# Correctement référencé #}
+        {{ form_row(registrationForm.password.second) }} {# Correctement référencé #}
+        <button type="submit">S'inscrire</button>
+    {{ form_end(registrationForm) }}
+{% endblock %}

@@ -1,28 +1,33 @@
 security:
+  # Définition des hashers de mot de passe
   password_hashers:
     Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface: "auto"
 
+  # Définition du fournisseur d'utilisateurs
   providers:
     app_user_provider:
       entity:
-        class: App\Entity\User
-        property: email
+        class: App\Entity\Users # Utilisation de ta classe Users
+        property: email # La propriété unique pour identifier l'utilisateur (email)
 
+  # Définition des firewalls
   firewalls:
     dev:
-      pattern: ^/(_(profiler|wdt)|css|images|js)/
-      security: false
+      pattern: ^/(_(profiler|wdt)|css|images|js)/ # Exclure ces chemins de l'authentification
+      security: false # Désactiver la sécurité pour ces chemins
 
     main:
       lazy: true
-      provider: app_user_provider
+      provider: app_user_provider # Utiliser le fournisseur d'utilisateurs défini
       form_login:
-        login_path: login
-        check_path: login
+        login_path: login # Chemin pour afficher le formulaire de connexion
+        check_path: login # Chemin pour soumettre les informations de connexion
+        default_target_path: home # Page de redirection après connexion
       logout:
-        path: logout
-        target: homepage
+        path: logout # Chemin pour se déconnecter
+        target: homepage # Page de redirection après déconnexion
 
+  # Définition des contrôles d'accès
   access_control:
-    - { path: ^/admin, roles: ROLE_ADMIN }
-    - { path: ^/profile, roles: ROLE_USER }
+    - { path: ^/admin, roles: ROLE_ADMIN } # Accès réservé aux administrateurs
+    - { path: ^/profile, roles: ROLE_USER } # Accès réservé aux utilisateurs authentifiés
