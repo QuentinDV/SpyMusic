@@ -25,8 +25,8 @@ class UsersCrudController extends AbstractCrudController
             EmailField::new('email', 'Email'),
             ChoiceField::new('role', 'Rôle')
                 ->setChoices([
-                    'Client' => 'client',
-                    'Admin' => 'admin'
+                    'client' => 'client',
+                    'admin' => 'admin'
                 ])
                 ->renderExpanded(),
             BooleanField::new('accessToken', 'Access Token')->hideOnIndex(), // Non affiché sur la liste

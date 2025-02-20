@@ -1,7 +1,20 @@
 easy_admin:
   entities:
-    - App\Entity\YourEntity
-  dashboard:
-    title: "Admin Dashboard"
-    route:
-      name: "admin_dashboard"
+    Users:
+      class: App\Entity\Users
+      list:
+        fields:
+          - id
+          - email
+          - role
+          - password
+      form:
+        fields:
+          - email
+          - password
+          - role
+  design:
+    brand_color: "#5c6bc0"
+
+  resource: '@EasyCorp\Bundle\EasyAdminBundle\Controller\AdminController'
+  prefix: /admin

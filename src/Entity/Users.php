@@ -2,12 +2,12 @@
 
 namespace App\Entity;
 
-use App\Repository\UserRepository;
+use App\Repository\UsersRepository;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 
-#[ORM\Entity(repositoryClass: UserRepository::class)]
+#[ORM\Entity(repositoryClass: UsersRepository::class)]
 #[ORM\Table(name: 'users')]
 #[ORM\UniqueConstraint(name: 'UNIQ_IDENTIFIER_EMAIL', fields: ['email'])]
 #[ORM\UniqueConstraint(name: 'UNIQ_IDENTIFIER_USERNAME', fields: ['username'])]
@@ -135,15 +135,7 @@ class Users implements UserInterface, PasswordAuthenticatedUserInterface
 
     // Implémentation des rôles (méthode exigée par UserInterface)
     public function getRoles(): array
-{
-    // Si l'utilisateur a le rôle 'admin', attribuer 'ROLE_ADMIN', sinon attribuer 'ROLE_USER'
-    if ($this->role === 'admin') {
-        return ['ROLE_ADMIN'];
-    } elseif ($this->role === 'client') {
-        return ['ROLE_USER'];
+    {
+        return ['ROLE_' . strtoupper($this->role)];
     }
-
-    // Retourne un tableau vide ou un rôle par défaut si aucun des rôles définis n'est trouvé
-    return [];
-}
 }

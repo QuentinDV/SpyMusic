@@ -12,7 +12,42 @@
 
         <div>
             <h2>Gestion des utilisateurs</h2>
-            <p>Vous pouvez gérer les utilisateurs ici.</p>
+            <p>Vous pouvez voir et gérer les utilisateurs ici.</p>
+
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Email</th>
+                        <th>Rôle</th>
+                        <th>Actions</th> {# Added column for actions #}
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for user in users %}
+                        <tr>
+                            <td>{{ user.userId }}</td>
+                            <td>{{ user.email }}</td>
+                            <td>{{ user.roles|join(', ') }}</td> {# Affiche les rôles en liste séparée par une virgule #}
+                            <td>
+                                {# Delete Button #}
+                                <form method="POST" action="{{ path('admin_user_delete', {'id': user.userId}) }}" style="display:inline;">
+                                    <button type="submit" class="btn btn-danger" onclick="return confirm('Êtes-vous sûr de vouloir supprimer cet utilisateur ?')">Supprimer</button>
+                                </form>
+
+                                {# Role Button (example: toggle between client/admin) #}
+                                <form method="POST" action="{{ path('admin_user_update_role', {'id': user.userId}) }}" style="display:inline;">
+                                    <button type="submit" class="btn btn-warning">{{ 'Changer le rôle' }}</button>
+                                </form>
+                            </td>
+                        </tr>
+                    {% else %}
+                        <tr>
+                            <td colspan="4" class="text-center">Aucun utilisateur trouvé.</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
         </div>
     </div>
 {% endblock %}
