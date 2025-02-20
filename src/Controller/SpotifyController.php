@@ -90,7 +90,7 @@ class SpotifyController extends AbstractController
         // Récupération des albums sauvegardés par l'utilisateur
         $albums = [];
         try {
-            $response = $this->client->request('GET', 'https://api.spotify.com/v1/me/albums', [
+            $response = $this->client->request('GET', 'https://api.spotify.com/v1/me/albums?limit=5', [
                 'headers' => ['Authorization' => 'Bearer ' . $accessToken],
             ]);
             $albums = $response->toArray()['items'];
@@ -99,19 +99,8 @@ class SpotifyController extends AbstractController
             return $this->redirectToRoute('spotify');
         }
     
-        // Données factices pour les recommandations
-        $recommendations = [
-            ['title' => 'Blinding Lights', 'artist' => 'The Weeknd', 'image' => 'https://via.placeholder.com/150'],
-            ['title' => 'Sicko Mode', 'artist' => 'Travis Scott', 'image' => 'https://via.placeholder.com/150'],
-            ['title' => 'Levitating', 'artist' => 'Dua Lipa', 'image' => 'https://via.placeholder.com/150'],
-            ['title' => 'Good 4 U', 'artist' => 'Olivia Rodrigo', 'image' => 'https://via.placeholder.com/150'],
-            ['title' => 'Stay', 'artist' => 'Justin Bieber', 'image' => 'https://via.placeholder.com/150'],
-            ['title' => 'Shivers', 'artist' => 'Ed Sheeran', 'image' => 'https://via.placeholder.com/150'],
-        ];
-    
         return $this->render('spotify/home.html.twig', [
             'albums' => $albums,
-            'recommendations' => $recommendations
         ]);
     }
 
@@ -178,6 +167,7 @@ class SpotifyController extends AbstractController
             // 🖼️ Formater les résultats
             foreach ($data['albums']['items'] as $album) {
                 $albums[] = [
+                    'id' => $album['id'],
                     'title' => $album['name'],
                     'artist' => $album['artists'][0]['name'],
                     'image' => $album['images'][0]['url'] ?? 'default.jpg',

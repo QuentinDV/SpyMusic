@@ -24,18 +24,16 @@
         display: grid;
         grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
         gap: 20px;
-        justify-content: center;
     }
     .album {
         background: #282828;
         border-radius: 10px;
         padding: 15px;
         text-align: center;
-        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        transition: transform 0.3s ease;
     }
     .album:hover {
         transform: translateY(-5px);
-        box-shadow: 0px 4px 10px rgba(255, 255, 255, 0.2);
     }
     .album img {
         width: 100%;
@@ -64,54 +62,46 @@
     .btn-spotify:hover {
         background: #18a848;
     }
-
-    .home-container a {
-        position: relative;
-        text-decoration: none;
+    .home-link {
+        display: inline-block;
+        margin-bottom: 20px;
         color: #1DB954;
         font-weight: bold;
         font-size: 1rem;
-        display: inline-block;
-        margin-bottom: 20px;
+        text-decoration: none;
+        border-bottom: 2px solid transparent;
+        transition: border-color 0.3s ease-in-out;
+    }
+    .home-link:hover {
+        border-color: #1DB954;
     }
 
-    .home-container a::after {
-        content: "";
-        position: absolute;
-        left: 0;
-        bottom: -3px;
-        width: 100%;
-        height: 2px;
-        background-color: #1DB954;
-        transform: scaleX(0);
-        transform-origin: left;
-        transition: transform 0.3s ease-in-out;
-    }
+    .album-link {
+    text-decoration: none; /* Empêche le soulignement par défaut */
+    color: inherit; /* Conserve la couleur du texte sans modification */
+}
 
-    .home-container a:hover::after {
-        transform: scaleX(1);
-    }
-
-
+.album-link:hover {
+    color: inherit; /* Garde la couleur du texte inchangée au survol */
+    cursor: pointer; /* Change le curseur pour un effet de clic */
+}
 </style>
 {% endblock %}
 
 {% block body %}
     <div class="container">
-        <div class="home-container">
-            <a href="/home">🏠 Accueil</a>
-        </div>
+        <a href="/home" class="home-link">🏠 Accueil</a>
         <h1>🎶 Mes Albums Spotify</h1>
         <div class="album-container">
             {% for item in albums %}
-                    <div class="album">
-                        <a href="/album/{{item.album.id}}">
+                <div class="album">
+                    <a href="/album/{{ item.album.id }}" class="album-link">
                         <img src="{{ item.album.images[0].url }}" alt="{{ item.album.name }}">
                         <h3>{{ item.album.name }}</h3>
-                        <p>🎤 {{ item.album.artists[0].name }}</p>
-                        <a href="{{ item.album.external_urls.spotify }}" target="_blank" class="btn-spotify">🎧 Écouter</a>
-                        </a>
-                    </div>
+                    </a>
+                    <p>🎤 {{ item.album.artists[0].name }}</p>
+                    <a href="{{ item.album.external_urls.spotify }}" target="_blank" class="btn-spotify">🎧 Écouter</a>
+                </div>
             {% endfor %}
         </div>
     </div>

@@ -60,21 +60,37 @@
     }
     .tracklist {
         margin-top: 30px;
-        text-align: left;
-        background: #181818;
+        background-color: var(--card);
         padding: 20px;
         border-radius: 15px;
         box-shadow: 0px 5px 15px rgba(255, 255, 255, 0.1);
     }
     .tracklist h2 {
+        color: var(--primary);
+        font-size: 1.5rem;
         margin-bottom: 15px;
-        color: #1DB954;
     }
     .tracklist ol {
         padding-left: 20px;
+        list-style-type: none;
     }
-    .tracklist li {
+    .track-item {
         margin-bottom: 8px;
+        display: flex;
+        justify-content: space-between;
+        font-size: 0.9rem;
+        color: var(--text-secondary);
+    }
+    .track-number {
+        font-weight: bold;
+        color: var(--primary);
+    }
+    .track-name {
+        flex: 1;
+    }
+    .track-duration {
+        font-size: 0.8rem;
+        color: var(--text-secondary);
     }
     .other-albums {
         margin-top: 40px;
@@ -127,9 +143,10 @@
 
     .product-container {
         display: flex;
-        gap: 20px;
+        justify-content: space-between; /* Espace entre les produits */
+        gap: 20px; /* Espacement entre les divs */
         margin-top: 30px;
-        justify-content: center;
+        flex-wrap: wrap; /* Permet d'adapter les éléments sur les petits écrans */
     }
 
     .product-panel {
@@ -140,10 +157,11 @@
         padding: 20px;
         border-radius: 15px;
         box-shadow: 0px 5px 15px rgba(255, 255, 255, 0.1);
-        width: 45%;
+        width: 45%; /* Définit la largeur des produits */
+        box-sizing: border-box;
     }
 
-    .product-image {
+    .product-panel img {
         width: 120px;
         border-radius: 10px;
     }
@@ -156,6 +174,11 @@
     .product-info h2 {
         color: #1DB954;
         margin-bottom: 10px;
+    }
+
+    .product-info p {
+        margin: 10px 0;
+        color: #fff;
     }
 
     .quantity {
@@ -223,11 +246,24 @@
         transform: scaleX(1);
     }
 
+    .album-link {
+    text-decoration: none; /* Empêche le soulignement par défaut */
+    color: inherit; /* Conserve la couleur du texte sans modification */
+}
+
+.album-link:hover {
+    color: inherit; /* Garde la couleur du texte inchangée au survol */
+    cursor: pointer; /* Change le curseur pour un effet de clic */
+}
+
 </style>
 {% endblock %}
 
 {% block body %}
 <div class="album-details-container">
+    <div class="home-container">
+            <a href="/home">🏠 Accueil</a>
+    </div>
     <!-- Album Info -->
     <div class="album-info">
         <img src="{{ album.images[0].url }}" alt="{{ album.name }}" class="album-cover">
@@ -243,7 +279,7 @@
     <!-- Formulaire d'ajout au panier -->
     <div class="product-container">
         <!-- Formulaire pour CD -->
-        <div class="product">
+        <div class="product-panel">
             <img src="{{ album.images[0].url }}" alt="CD - {{ album.name }}" class="product-image">
             <div class="product-info">
                 <h2>💿 CD</h2>
@@ -263,7 +299,7 @@
         </div>
 
         <!-- Formulaire pour Vinyle -->
-        <div class="product">
+        <div class="product-panel">
             <img src="{{ album.images[0].url }}" alt="Vinyle - {{ album.name }}" class="product-image">
             <div class="product-info">
                 <h2>💿 Vinyle</h2>
@@ -283,15 +319,27 @@
         </div>
     </div>
 
-    <!-- Liste des morceaux -->
-    <div class="tracklist">
-        <h2>🎼 Liste des morceaux</h2>
-        <ol>
-            {% for track in album.tracks.items %}
-                <li>{{ track.track_number }}. {{ track.name }} - {{ (track.duration_ms / 60000)|round(2) }} min</li>
-            {% endfor %}
-        </ol>
-    </div>
+
+<div class="tracklist">
+    <h2>🎼 Liste des morceaux</h2>
+    <ol>
+        <li class="track-item">
+            <span class="track-number">#</span>
+            <span class="track-name">Titre</span> 
+            <span class="track-duration">Durée</span>
+        </li>
+        {% for track in album.tracks.items %}
+            {% set minutes = track.duration_ms // 60000 %}
+            {% set seconds = ((track.duration_ms % 60000) / 1000)|round %}
+            <li class="track-item">
+            <span class="track-number">{{ track.track_number }}.</span>
+            <span class="track-name">{{ track.name }}</span> 
+            <span class="track-duration">{{ minutes }}:{{ seconds|format('%02d') }} </span>
+            </li>
+
+        {% endfor %}
+    </ol>
+</div>
 
     <!-- Autres albums de l'artiste -->
     <div class="other-albums">
@@ -299,7 +347,7 @@
         <div class="album-list">
             {% for other_album in artistAlbums %}
                 <div class="album-card">
-                    <a href="{{ path('spotify_album_details', {id: other_album.id}) }}">
+                    <a href="{{ path('spotify_album_details', {id: other_album.id}) }}" class="album-link">
                         <img src="{{ other_album.images[0].url }}" alt="{{ other_album.name }}">
                         <p>{{ other_album.name }}</p>
                     </a>

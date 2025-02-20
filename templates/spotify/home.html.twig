@@ -9,15 +9,27 @@
         color: #fff;
         font-family: Arial, sans-serif;
     }
-    .main-container {
-        display: flex;
-        flex-direction: column;
-        max-width: 1400px;
+    .container {
+        max-width: 1100px;
         margin: auto;
         padding: 20px;
     }
-
-    /* ---- Barre de recherche ---- */
+    h1 {
+        text-align: center;
+        margin-bottom: 20px;
+        font-size: 2rem;
+        color: #1DB954;
+    }
+    .banner {
+        background: linear-gradient(45deg, #333, #1DB954);
+        padding: 20px;
+        border-radius: 10px;
+        text-align: center;
+        margin-bottom: 20px;
+    }
+    .banner p {
+        font-size: 1.2rem;
+    }
     .search-bar {
         width: 100%;
         padding: 10px;
@@ -30,99 +42,6 @@
     }
     .search-bar::placeholder {
         color: #b3b3b3;
-    }
-
-    /* ---- Bibliothèque ---- */
-    .library-container {
-        margin-top: 20px;
-    }
-    .library-container h2 {
-        font-size: 1.3rem;
-        color: #1DB954;
-        margin-bottom: 15px;
-    }
-    .album-list {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-        gap: 15px;
-        list-style: none;
-        padding: 0;
-    }
-    .album-item {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        background: #282828;
-        padding: 10px;
-        border-radius: 10px;
-        transition: transform 0.2s ease, background 0.2s ease;
-    }
-    .album-item:hover {
-        transform: scale(1.05);
-        background: #333;
-    }
-    .album-item img {
-        width: 100%;
-        height: auto;
-        border-radius: 5px;
-    }
-    .album-info {
-        text-align: center;
-        margin-top: 10px;
-    }
-    .album-info h4 {
-        font-size: 1rem;
-        margin: 0;
-        color: white;
-    }
-    .album-info p {
-        font-size: 0.9rem;
-        color: #b3b3b3;
-    }
-
-    /* ---- Contenu principal ---- */
-    .content {
-        flex-grow: 1;
-        margin-bottom: 20px;
-    }
-    .banner {
-        background: linear-gradient(45deg, #333, #1DB954);
-        padding: 20px;
-        border-radius: 10px;
-        text-align: center;
-    }
-    .banner h1 {
-        font-size: 2rem;
-        margin: 0;
-    }
-
-    .rec-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-        gap: 15px;
-    }
-    .rec-item {
-        background: #282828;
-        padding: 15px;
-        border-radius: 10px;
-        text-align: center;
-        cursor: pointer;
-        transition: transform 0.3s ease;
-    }
-    .rec-item:hover {
-        transform: scale(1.05);
-    }
-    .rec-item img {
-        width: 100%;
-        border-radius: 10px;
-        margin-bottom: 10px;
-    }
-
-    .global-search {
-        margin-top: 20px;
-        padding: 10px;
-        background: #282828;
-        border-radius: 10px;
     }
     .search-results {
         list-style: none;
@@ -146,101 +65,105 @@
         border-radius: 5px;
         margin-right: 10px;
     }
+    .album-container {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 15px;
+    }
+    .album {
+        background: #282828;
+        border-radius: 10px;
+        padding: 15px;
+        text-align: center;
+        transition: transform 0.3s ease;
+    }
+    .album:hover {
+        transform: translateY(-5px);
+    }
+    .album img {
+        width: 100%;
+        border-radius: 10px;
+        margin-bottom: 10px;
+    }
+    .album h3 {
+        font-size: 1.1rem;
+        margin: 5px 0;
+    }
+    .album p {
+        font-size: 0.9rem;
+        color: #b3b3b3;
+    }
+    .home-link {
+        position: relative;
+        display: inline-block;
+        margin-bottom: 20px;
+        color: #1DB954;
+        font-weight: bold;
+        font-size: 1rem;
+        text-decoration: none;
+    }
+
+    .home-link::after {
+        content: "";
+        position: absolute;
+        left: 0;
+        bottom: -3px;
+        width: 100%;
+        height: 2px;
+        background-color: #1DB954;
+        transform: scaleX(0);
+        transform-origin: left;
+        transition: transform 0.3s ease-in-out;
+    }
+
+    .home-link:hover::after {
+        transform: scaleX(1);
+    }
+
+    .album-link {
+    text-decoration: none; /* Empêche le soulignement par défaut */
+    color: inherit; /* Conserve la couleur du texte sans modification */
+}
+
+.album-link:hover {
+    color: inherit; /* Garde la couleur du texte inchangée au survol */
+    cursor: pointer; /* Change le curseur pour un effet de clic */
+}
+
 </style>
 {% endblock %}
 
 {% block body %}
-<div class="main-container">
-    <!-- Sidebar - Bibliothèque -->
-    <aside class="sidebar">
-        <div class="library-container">
-            <a href="/myalbums"><h2>📚 Ma Bibliothèque</h2></a>
-        </div>
-        <input type="text" id="searchInput" class="search-bar" placeholder="🔍 Rechercher un album...">
-        <ul class="album-list">
-            {% for item in albums %}
-                <li class="album-item">
-                    <a href="/album/{id: item.album.id}" class="album-link">
-                        <img src="{{ item.album.images[0].url }}" alt="{{ item.album.name }}">
-                        <div class="album-info">
-                            <h4>{{ item.album.name }}</h4>
-                            <p>{{ item.album.artists[0].name }}</p>
-                        </div>
-                    </a>
-                </li>
-            {% endfor %}
-        </ul>
-    </aside>
-</div>
-
-
-    <!-- Contenu principal -->
-    <section class="content">
+    <div class="container">
         <div class="banner">
             <h1>🎵 Bienvenue sur SpyMusic</h1>
             <p>Achetez Vos Projets Préférés De Vos Artistes Préférés !</p>
         </div>
 
-        <!-- 🔹 Recherche d'albums -->
-        <div class="global-search">
-            <h2>🔍 Rechercher un album</h2>
-            <input type="text" id="globalSearchInput" class="search-bar" placeholder="Entrez un album...">
-            <ul class="search-results" id="searchResults"></ul>
-        </div>
+        <h2>🔍 Rechercher un album</h2>
+        <input type="text" id="globalSearchInput" class="search-bar" placeholder="Entrez un album...">
+        <ul class="search-results" id="searchResults"></ul>
 
-        <!-- Bibliothèque -->
-        <div class="library-container">
-            <h2>📚 Ma Bibliothèque</h2>
-            <ul class="album-list">
-                {% for item in albums %}
-                    <li class="album-item">
-                        <a href="/album/{{ item.album.id }}" class="album-link">
-                            <img src="{{ item.album.images[0].url }}" alt="{{ item.album.name }}">
-                            <div class="album-info">
-                                <h4>{{ item.album.name }}</h4>
-                                <p>{{ item.album.artists[0].name }}</p>
-                            </div>
-                        </a>
-                    </li>
-                {% endfor %}
-            </ul>
-        </div>
-    </section>
-</div>
+        <a href="/myalbums" class="home-link">📚 Ma Bibliothèque</a>
 
-<!-- 🔹 Script pour la recherche dynamique -->
+        <div class="album-container">
+            {% for item in albums %}
+                <div class="album">
+                    <a href="/album/{{ item.album.id }}" class="album-link">
+                        <img src="{{ item.album.images[0].url }}" alt="{{ item.album.name }}">
+                        <h3>{{ item.album.name }}</h3>
+                    </a>
+                    <p>🎤 {{ item.album.artists[0].name }}</p>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+
 <script>
     document.addEventListener("DOMContentLoaded", function () {
-        let searchInput = document.getElementById("searchInput");
-        let albumItems = document.querySelectorAll(".album-item");
-
-        searchInput.addEventListener("keyup", function () {
-            let filter = searchInput.value.toLowerCase();
-
-            albumItems.forEach(album => {
-                let title = album.querySelector("h4").innerText.toLowerCase();
-                let artist = album.querySelector("p").innerText.toLowerCase();
-
-                if (title.includes(filter) || artist.includes(filter)) {
-                    album.style.display = "flex"; // ✅ Afficher l'élément correspondant
-                } else {
-                    album.style.display = "none"; // ❌ Cacher les non correspondants
-                }
-            });
-        });
-    });
-</script>
-
-<script>
-  document.addEventListener("DOMContentLoaded", function () {
     let globalSearchInput = document.getElementById("globalSearchInput");
     let searchResults = document.getElementById("searchResults");
-    let selectedGenre = document.getElementById("selectedGenre");
-    let artistResults = document.getElementById("artistResults");
-    let recommendationsSection = document.getElementById("recommendationsSection");
-    let categoriesSection = document.getElementById("categoriesSection");
 
-    // 🔹 Recherche d'albums
     globalSearchInput.addEventListener("keyup", function () {
         let query = globalSearchInput.value.trim();
         if (query.length > 2) {
@@ -253,62 +176,46 @@
                         return;
                     }
                     data.albums.forEach(album => {
+                        let a = document.createElement("a");
+                        a.href = `/album/${album.id}`;
+                        a.style.textDecoration = "none";
+                        a.style.color = "inherit";
+                        
                         let li = document.createElement("li");
+                        li.style.display = "flex";
+                        li.style.alignItems = "center";
+                        li.style.padding = "10px";
+                        li.style.background = "#1c1c1c";
+                        li.style.borderRadius = "5px";
+                        li.style.marginBottom = "5px";
+                        li.style.transition = "background 0.3s ease";
+                        li.style.cursor = "pointer";
+                        
                         li.innerHTML = `
-                            <img src="${album.image}" alt="${album.title}" width="50">
+                            <img src="${album.image}" alt="${album.title}" width="50" style="border-radius: 5px; margin-right: 10px;">
                             <div>
                                 <strong>${album.title}</strong> - ${album.artist}
-                                <a href="${album.url}" target="_blank">🎧 Écouter</a>
                             </div>
                         `;
-                        searchResults.appendChild(li);
-                    });
 
-                    // 🔹 Assurer que les catégories et recommandations restent visibles
-                    categoriesSection.style.display = "block";
-                    recommendationsSection.style.display = "block";
+                        li.addEventListener("mouseenter", () => {
+                            li.style.background = "#1DB954";
+                        });
+
+                        li.addEventListener("mouseleave", () => {
+                            li.style.background = "#1c1c1c";
+                        });
+
+                        a.appendChild(li);
+                        searchResults.appendChild(a);
+                    });
                 })
                 .catch(error => console.error("Erreur de recherche :", error));
         } else {
             searchResults.innerHTML = "";
-            categoriesSection.style.display = "block";
-            recommendationsSection.style.display = "block";
         }
     });
+});
 
-    // 🔹 Gérer le clic sur les catégories
-    document.querySelectorAll(".category").forEach(category => {
-        category.addEventListener("click", function () {
-            let genre = this.getAttribute("data-genre");
-            selectedGenre.innerText = this.innerText;
-            recommendationsSection.style.display = "block";
-
-            fetch(`/spotify/recommendations?genre=${genre}`)
-                .then(response => response.json())
-                .then(data => {
-                    artistResults.innerHTML = "";
-                    if (!data.artists || data.artists.length === 0) {
-                        artistResults.innerHTML = "<p>Aucun artiste trouvé</p>";
-                        return;
-                    }
-                    data.artists.forEach(artist => {
-                        let div = document.createElement("div");
-                        div.classList.add("artist-item");
-                        div.innerHTML = `
-                            <img src="${artist.image}" alt="${artist.name}">
-                            <h4>${artist.name}</h4>
-                            <a href="${artist.url}" target="_blank">🎧 Écouter</a>
-                        `;
-                        artistResults.appendChild(div);
-                    });
-
-                    // 🔹 S'assurer que les sections restent visibles
-                    categoriesSection.style.display = "block";
-                    recommendationsSection.style.display = "block";
-                })
-                .catch(error => console.error("Erreur de récupération des artistes :", error));
-        });
-    });
-  });
-</script>
+    </script>
 {% endblock %}
