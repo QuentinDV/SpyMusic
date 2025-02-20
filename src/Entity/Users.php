@@ -98,12 +98,12 @@ class Users implements UserInterface, PasswordAuthenticatedUserInterface
     }
 
     // Getter et setter pour accessToken
-    public function getAccessToken(): ?string
+    public function getAccessTokenDb(): ?string
     {
         return $this->accessToken;
     }
 
-    public function setAccessToken(?string $accessToken): static
+    public function setAccessTokenDb(?string $accessToken): static
     {
         $this->accessToken = $accessToken;
         return $this;

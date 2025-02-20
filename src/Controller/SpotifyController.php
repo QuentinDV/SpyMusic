@@ -1,4 +1,5 @@
 <?php
+// src/Controller/SpotifyController.php
 
 namespace App\Controller;
 
@@ -7,14 +8,17 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
+use App\Service\SpotifyAuth;
 
 class SpotifyController extends AbstractController
 {
     private HttpClientInterface $client;
+    private SpotifyAuth $spotifyAuth;
 
-    public function __construct(HttpClientInterface $client)
+    public function __construct(HttpClientInterface $client, SpotifyAuth $spotifyAuth)
     {
         $this->client = $client;
+        $this->spotifyAuth = $spotifyAuth; // Injecting the SpotifyAuth service
     }
 
     #[Route("/spotify", name: "spotify")]
@@ -43,24 +47,7 @@ class SpotifyController extends AbstractController
             return new Response("Erreur: Aucun code reçu", Response::HTTP_BAD_REQUEST);
         }
     
-        // Échange du code contre un token d'accès
-        $response = $this->client->request('POST', 'https://accounts.spotify.com/api/token', [
-            'headers' => [
-                'Authorization' => 'Basic ' . base64_encode("$clientId:$clientSecret"),
-                'Content-Type' => 'application/x-www-form-urlencoded'
-            ],
-            'body' => [
-                'grant_type' => 'authorization_code',
-                'code' => $code,
-                'redirect_uri' => $redirectUri
-            ]
-        ]);
-    
-        $data = $response->toArray();
-        $accessToken = $data['access_token'];
-    
-        $session = $request->getSession();
-        $session->set('spotify_access_token', $accessToken);
+        $tokens = $this->spotifyAuth->getAccessToken($code);
     
         // 🔹 Redirection vers la page "/spotify/home"
         return $this->redirectToRoute('spotify_home');
