@@ -114,4 +114,25 @@ class CartController extends AbstractController
 
         return $this->redirectToRoute('spotify_album_details', ['id' => $request->get('albumId')]);
     }
+
+    #[Route('/cart/remove/{id}', name: 'cart_remove', methods: ['POST'])]
+    public function removeFromCart(Cart $cartItem, EntityManagerInterface $em): Response
+    {
+        $user = $this->getUser(); // Assure-toi que l'utilisateur est connecté
+        if (!$user) {
+            $this->addFlash('error', 'Vous devez être connecté pour supprimer du panier.');
+            return $this->redirectToRoute('app_login');
+        }
+
+        if ($cartItem->getUser() !== $user) {
+            $this->addFlash('error', 'Vous ne pouvez pas supprimer cet élément du panier.');
+            return $this->redirectToRoute('app_home');
+        }
+
+        $em->remove($cartItem);
+        $em->flush();
+
+        $this->addFlash('success', 'Supprimé du panier avec succès !');
+        return $this->redirectToRoute('app_shopping_cart');
+    }
 }

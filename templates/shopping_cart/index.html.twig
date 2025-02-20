@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Shopping Cart - Skyrise Decor</title>
+    <title>Panier</title>
     <style>
         * {
             margin: 0;
@@ -250,7 +250,11 @@
                     </div>
                         <span class="quantity">{{ item.quantity }}</span>
                         <span class="total-price">{{ item.totalPrice }} €</span>
-                        <button class="delete-btn">🗑</button>
+                        
+                        <!-- Formulaire de suppression -->
+                        <form action="{{ path('cart_remove', {'id': item.cartId}) }}" method="POST" style="display:inline;">
+                            <button type="submit" class="delete-btn">🗑</button>
+                        </form>
                 </div>
                 {% else %}
                 <p>No items in your cart.</p>
