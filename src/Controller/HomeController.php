@@ -15,7 +15,7 @@ class HomeController extends AbstractController
     {
         $contents = $this->renderView('home/index.html');
 
-        return new Response($contents);
+        return $this->redirectToRoute('spotify_home');
     }
 } 
 ?> 

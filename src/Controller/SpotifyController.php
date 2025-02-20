@@ -63,6 +63,10 @@ class SpotifyController extends AbstractController
         // Récupérer l'utilisateur connecté
         $user = $this->security->getUser();
 
+        if (!$user) {
+            return $this->redirectToRoute('login');
+        }
+
         $accessToken = $user->getAccessTokenDb();
         $refreshToken = $user->getRefreshToken();
 
@@ -111,6 +115,10 @@ class SpotifyController extends AbstractController
         
         // Récupérer l'utilisateur connecté
         $user = $this->security->getUser();
+
+        if (!$user) {
+            return $this->redirectToRoute('login');
+        }
 
         $accessToken = $user->getAccessTokenDb();
         $refreshToken = $user->getRefreshToken();
