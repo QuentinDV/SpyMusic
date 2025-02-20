@@ -1,17 +1,80 @@
-{% block body %}
-    <h1>Inscription</h1>
-    {{ form_start(registrationForm) }}
-        {{ form_row(registrationForm.email) }}
-        
-        {# Champs de mot de passe avec une vérification des deux champs (confirmation du mot de passe) #}
-        <div>
-            {{ form_row(registrationForm.password.first) }}
-        </div>
-        <div>
-            {{ form_row(registrationForm.password.second) }}
-        </div>
+{% extends 'base.html.twig' %}
 
-        {# Un seul bouton de soumission #}
-        <button type="submit">S'inscrire</button>
-    {{ form_end(registrationForm) }}
+{% block title %}Inscription | Spotify{% endblock %}
+
+{% block stylesheets %}
+<style>
+    body {
+        background-color: #121212;
+        color: #fff;
+        font-family: Arial, sans-serif;
+    }
+    .main-container {
+        display: flex;
+        max-width: 1400px;
+        margin: auto;
+        padding: 20px;
+    }
+    .form-container {
+        background: #282828;
+        padding: 20px;
+        border-radius: 10px;
+        width: 100%;
+        max-width: 500px;
+        margin: auto;
+    }
+    .form-container h1 {
+        text-align: center;
+        margin-bottom: 20px;
+    }
+    .form-container .form-group {
+        margin-bottom: 15px;
+    }
+    .form-container label {
+        display: block;
+        margin-bottom: 5px;
+    }
+    .form-container input {
+        width: 100%;
+        padding: 10px;
+        border: none;
+        border-radius: 5px;
+        background: #333;
+        color: #fff;
+    }
+    .form-container button {
+        width: 100%;
+        padding: 10px;
+        border: none;
+        border-radius: 5px;
+        background: #1DB954;
+        color: #fff;
+        font-size: 1rem;
+        cursor: pointer;
+        transition: background 0.3s ease;
+    }
+    .form-container button:hover {
+        background: #1aa34a;
+    }
+</style>
+{% endblock %}
+
+{% block body %}
+<div class="main-container">
+    <div class="form-container">
+        <h1>Inscription</h1>
+        {{ form_start(registrationForm) }}
+            <div class="form-group">
+                {{ form_row(registrationForm.email) }}
+            </div>
+            <div class="form-group">
+                {{ form_row(registrationForm.password.first) }}
+            </div>
+            <div class="form-group">
+                {{ form_row(registrationForm.password.second) }}
+            </div>
+            <button type="submit">S'inscrire</button>
+        {{ form_end(registrationForm) }}
+    </div>
+</div>
 {% endblock %}
