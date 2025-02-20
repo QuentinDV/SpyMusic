@@ -42,11 +42,7 @@ class Reviews
         $this->reviewId = $reviewId;
         return $this;
     }
-
-    // autres getters et setters...
-
-
-
+    
     // Getters pour user
     public function getUser(): ?Users
     {

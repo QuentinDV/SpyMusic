@@ -11,6 +11,12 @@ use Symfony\Contracts\HttpClient\HttpClientInterface;
 use App\Service\SpotifyAuth;
 use Symfony\Bundle\SecurityBundle\Security;
 use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Component\Form\Extension\Core\Type\HiddenType;
+use Symfony\Component\Form\Extension\Core\Type\IntegerType;
+use Symfony\Component\Form\Extension\Core\Type\SubmitType;
+use Symfony\Component\Form\FormFactoryInterface;
+use App\Entity\Cart;
+use App\Form\CartType;
 
 class SpotifyController extends AbstractController
 {
@@ -326,56 +332,78 @@ public function genrePage(Request $request, string $genre): Response
     
 }
 
-    #[Route("/album/{id}", name: "spotify_album_details")]
-    public function albumDetails(Request $request, string $id): Response
-    {
+#[Route("/album/{id}", name: "spotify_album_details")]
+public function albumDetails(Request $request, string $id, FormFactoryInterface $formFactory): Response
+{
+    $user = $this->security->getUser();
 
-        $user = $this->security->getUser();
+    if (!$user) {
+        return $this->redirectToRoute('login');
+    }
 
-        if (!$user) {
-            return $this->redirectToRoute('login');
-        }
+    $accessToken = $user->getAccessTokenDb();
+    $refreshToken = $user->getRefreshToken();
 
-        $accessToken = $user->getAccessTokenDb();
-        $refreshToken = $user->getRefreshToken();
+    if (!$refreshToken) {
+        return $this->redirectToRoute('spotify');
+    }
 
-        if (!$refreshToken) {
-            return $this->redirectToRoute('spotify');
-        }
+    $this->spotifyAuth->getValidAccessToken($accessToken, $refreshToken);
+    $accessToken = $user->getAccessTokenDb();
 
-        $this->spotifyAuth->getValidAccessToken($accessToken, $refreshToken);
-        $accessToken = $user->getAccessTokenDb();
-    
-        if (!$accessToken) {
-            return $this->redirectToRoute('spotify');
-        }
-    
-        try {
-            // 🔹 Récupération des détails de l'album
-            $albumResponse = $this->client->request('GET', "https://api.spotify.com/v1/albums/{$id}", [
-                'headers' => ['Authorization' => 'Bearer ' . $accessToken],
-            ]);
-    
-            $album = $albumResponse->toArray();
-    
-            // 🔹 Récupération des autres albums du même artiste
-            $artistId = $album['artists'][0]['id'];
-            $artistAlbumsResponse = $this->client->request('GET', "https://api.spotify.com/v1/artists/{$artistId}/albums", [
-                'headers' => ['Authorization' => 'Bearer ' . $accessToken],
-                'query' => ['include_groups' => 'album', 'limit' => 6]
-            ]);
-    
-            $artistAlbums = $artistAlbumsResponse->toArray()['items'];
-    
-        } catch (\Exception $e) {
-            return $this->render('spotify/error.html.twig', [
-                'message' => 'Impossible de charger les informations de l’album.'
-            ]);
-        }
-    
-        return $this->render('spotify/album.html.twig', [
-            'album' => $album,
-            'artistAlbums' => $artistAlbums,
+    if (!$accessToken) {
+        return $this->redirectToRoute('spotify');
+    }
+
+    try {
+        // 🔹 Récupération des détails de l'album
+        $albumResponse = $this->client->request('GET', "https://api.spotify.com/v1/albums/{$id}", [
+            'headers' => ['Authorization' => 'Bearer ' . $accessToken],
+        ]);
+
+        $album = $albumResponse->toArray();
+
+        // 🔹 Récupération des autres albums du même artiste
+        $artistId = $album['artists'][0]['id'];
+        $artistAlbumsResponse = $this->client->request('GET', "https://api.spotify.com/v1/artists/{$artistId}/albums", [
+            'headers' => ['Authorization' => 'Bearer ' . $accessToken],
+            'query' => ['include_groups' => 'album', 'limit' => 6]
+        ]);
+
+        $artistAlbums = $artistAlbumsResponse->toArray()['items'];
+
+    } catch (\Exception $e) {
+        return $this->render('spotify/error.html.twig', [
+            'message' => 'Impossible de charger les informations de l’album.'
         ]);
     }
+
+    // 🔹 Création du formulaire pour le CD
+    $form_cd = $formFactory->createBuilder()
+        ->add('albumId', HiddenType::class, ['data' => $id])
+        ->add('type', HiddenType::class, ['data' => 'cd'])
+        ->add('quantity', IntegerType::class, [
+            'data' => 1,
+            'attr' => ['min' => 1]
+        ])
+        ->getForm();
+
+    // 🔹 Création du formulaire pour le Vinyle
+    $form_vinyle = $formFactory->createBuilder()
+        ->add('albumId', HiddenType::class, ['data' => $id])
+        ->add('type', HiddenType::class, ['data' => 'vinyle'])
+        ->add('quantity', IntegerType::class, [
+            'data' => 1,
+            'attr' => ['min' => 1]
+        ])
+        ->getForm();
+
+    return $this->render('spotify/album.html.twig', [
+        'album' => $album,
+        'artistAlbums' => $artistAlbums,
+        'form_cd' => $form_cd->createView(),
+        'form_vinyle' => $form_vinyle->createView(),
+    ]);
+}
+
 }

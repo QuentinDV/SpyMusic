@@ -59,16 +59,30 @@ class Cart
         return $this;
     }
 
-    // Getters pour product
-    public function getProduct(): ?Products
+    // Getters pour albumId
+    public function getAlbumId(): ?string
     {
-        return $this->product;
+        return $this->albumId;
     }
 
-    // Setters pour product
-    public function setProduct(?Products $product): self
+    // Setters pour albumId
+    public function setAlbumId(string $albumId): self
     {
-        $this->product = $product;
+        $this->albumId = $albumId;
+
+        return $this;
+    }
+
+    // Getters pour type
+    public function getType(): ?string
+    {
+        return $this->type;
+    }
+
+    // Setters pour type
+    public function setType(string $type): self
+    {
+        $this->type = $type;
 
         return $this;
     }

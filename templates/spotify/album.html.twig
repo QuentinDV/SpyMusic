@@ -229,9 +229,6 @@
 {% block body %}
 <div class="album-details-container">
     <!-- Album Info -->
-    <div class="home-container">
-            <a href="/home">🏠 Accueil</a>
-    </div>
     <div class="album-info">
         <img src="{{ album.images[0].url }}" alt="{{ album.name }}" class="album-cover">
         <div class="album-meta">
@@ -243,34 +240,45 @@
         </div>
     </div>
 
+    <!-- Formulaire d'ajout au panier -->
     <div class="product-container">
-        <!-- Vinyle -->
-        <div class="product-panel">
-            <img src="{{ album.images[0].url }}" alt="Vinyle - {{ album.name }}" class="product-image">
-            <div class="product-info">
-                <h2>🎵 Vinyle</h2>
-                <p>Édition spéciale vinyle de l'album.</p>
-                <div class="quantity">
-                    <button class="quantity-btn" onclick="updateQuantity('vinyl', -1)">-</button>
-                    <span id="vinyl-quantity">1</span>
-                    <button class="quantity-btn" onclick="updateQuantity('vinyl', 1)">+</button>
-                </div>
-                <button class="add-to-cart">🛒 Ajouter au panier</button>
-            </div>
-        </div>
-
-        <!-- CD -->
-        <div class="product-panel">
+        <!-- Formulaire pour CD -->
+        <div class="product">
             <img src="{{ album.images[0].url }}" alt="CD - {{ album.name }}" class="product-image">
             <div class="product-info">
                 <h2>💿 CD</h2>
-                <p>Version CD de l'album.</p>
-                <div class="quantity">
-                    <button class="quantity-btn" onclick="updateQuantity('cd', -1)">-</button>
-                    <span id="cd-quantity">1</span>
-                    <button class="quantity-btn" onclick="updateQuantity('cd', 1)">+</button>
-                </div>
-                <button class="add-to-cart">🛒 Ajouter au panier</button>
+                <p>Édition standard CD.</p>
+                {% if form_cd is defined %}
+                    {{ form_start(form_cd, { 'action': path('cart_add'), 'attr': {'class': 'cart-form'} }) }}
+                        {{ form_widget(form_cd.albumId) }}
+                        {{ form_widget(form_cd.type) }}
+                        <label for="{{ form_cd.quantity.vars.id }}">Quantité :</label>
+                        {{ form_widget(form_cd.quantity, { 'attr': {'min': 1} }) }}
+                        <button type="submit" class="add-to-cart">🛒 Ajouter au panier</button>
+                    {{ form_end(form_cd) }}
+                {% else %}
+                    <p>Erreur : formulaire CD non disponible.</p>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- Formulaire pour Vinyle -->
+        <div class="product">
+            <img src="{{ album.images[0].url }}" alt="Vinyle - {{ album.name }}" class="product-image">
+            <div class="product-info">
+                <h2>💿 Vinyle</h2>
+                <p>Édition standard Vinyle.</p>
+                {% if form_vinyle is defined %}
+                    {{ form_start(form_vinyle, { 'action': path('cart_add'), 'attr': {'class': 'cart-form'} }) }}
+                        {{ form_widget(form_vinyle.albumId) }}
+                        {{ form_widget(form_vinyle.type) }}
+                        <label for="{{ form_vinyle.quantity.vars.id }}">Quantité :</label>
+                        {{ form_widget(form_vinyle.quantity, { 'attr': {'min': 1} }) }}
+                        <button type="submit" class="add-to-cart">🛒 Ajouter au panier</button>
+                    {{ form_end(form_vinyle) }}
+                {% else %}
+                    <p>Erreur : formulaire Vinyle non disponible.</p>
+                {% endif %}
             </div>
         </div>
     </div>
@@ -299,9 +307,6 @@
             {% endfor %}
         </div>
     </div>
-
-    <!-- Bouton retour -->
-    <a href="{{ path('spotify_home') }}" class="btn-back">⬅ Retour à l'accueil</a>
 </div>
 <script>
 function updateQuantity(type, change) {
