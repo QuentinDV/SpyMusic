@@ -78,6 +78,8 @@ class ComposerStaticInit74ab73114a599f4a2997b6a284f9e273
             'Symfony\\Component\\PasswordHasher\\' => 33,
             'Symfony\\Component\\OptionsResolver\\' => 34,
             'Symfony\\Component\\Mime\\' => 23,
+            'Symfony\\Component\\Mailer\\Bridge\\Mailgun\\' => 40,
+            'Symfony\\Component\\Mailer\\' => 25,
             'Symfony\\Component\\Intl\\' => 23,
             'Symfony\\Component\\HttpKernel\\' => 29,
             'Symfony\\Component\\HttpFoundation\\' => 33,
@@ -113,6 +115,7 @@ class ComposerStaticInit74ab73114a599f4a2997b6a284f9e273
         ),
         'E' => 
         array (
+            'Egulias\\EmailValidator\\' => 23,
             'EasyCorp\\Bundle\\EasyAdminBundle\\' => 32,
         ),
         'D' => 
@@ -305,6 +308,14 @@ class ComposerStaticInit74ab73114a599f4a2997b6a284f9e273
         array (
             0 => __DIR__ . '/..' . '/symfony/mime',
         ),
+        'Symfony\\Component\\Mailer\\Bridge\\Mailgun\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/symfony/mailgun-mailer',
+        ),
+        'Symfony\\Component\\Mailer\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/symfony/mailer',
+        ),
         'Symfony\\Component\\Intl\\' => 
         array (
             0 => __DIR__ . '/..' . '/symfony/intl',
@@ -420,6 +431,10 @@ class ComposerStaticInit74ab73114a599f4a2997b6a284f9e273
         'PaypalServerSdkLib\\' => 
         array (
             0 => __DIR__ . '/..' . '/paypal/paypal-server-sdk/src',
+        ),
+        'Egulias\\EmailValidator\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/egulias/email-validator/src',
         ),
         'EasyCorp\\Bundle\\EasyAdminBundle\\' => 
         array (

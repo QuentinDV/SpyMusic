@@ -2,6 +2,75 @@
 
 {% block title %}Admin Dashboard{% endblock %}
 
+{% block stylesheets %}
+<style>
+    body {
+        background-color: #121212;
+        color: #fff;
+        font-family: Arial, sans-serif;
+    }
+    .container {
+        max-width: 1400px;
+        margin: auto;
+        padding: 40px;
+    }
+    .alert {
+        background: #282828;
+        padding: 20px;
+        border-radius: 10px;
+        margin-bottom: 50px; 
+    }
+    h1, h2 {
+        margin-bottom: 50px; 
+    }
+    .table {
+        background: #282828;
+        border-radius: 15px;
+        overflow: hidden;
+        margin-bottom: 50px; 
+    }
+    .table th, .table td {
+        color: #fff;
+        border-color: #444;
+        padding: 20px 30px; 
+        text-align: center; 
+    }
+    .table-striped tbody tr:nth-of-type(odd) {
+        background-color: #333;
+    }
+    .btn {
+        padding: 10px 20px; 
+        border: none;
+        border-radius: 10px;
+        cursor: pointer;
+        transition: background 0.3s ease;
+        margin-right: 30px;
+        margin-bottom: 30px;
+    }
+    .btn-success {
+        background: #1DB954;
+        color: #fff;
+    }
+    .btn-success:hover {
+        background: #1aa34a;
+    }
+    .btn-danger {
+        background: #e63946;
+        color: #fff;
+    }
+    .btn-danger:hover {
+        background: #c62828;
+    }
+    .btn-warning {
+        background: #f4a261;
+        color: #fff;
+    }
+    .btn-warning:hover {
+        background: #e76f51;
+    }
+</style>
+{% endblock %}
+
 {% block body %}
     <div class="container">
         <h1>Welcome to the Admin Dashboard</h1>
