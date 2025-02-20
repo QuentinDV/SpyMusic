@@ -20,6 +20,19 @@
         font-size: 2rem;
         color: #1DB954;
     }
+    .search-bar {
+        width: 100%;
+        padding: 10px;
+        margin-bottom: 20px;
+        border: none;
+        border-radius: 5px;
+        background: #282828;
+        color: #fff;
+        font-size: 1rem;
+    }
+    .search-bar::placeholder {
+        color: #b3b3b3;
+    }
     .album-container {
         display: grid;
         grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
@@ -75,16 +88,14 @@
     .home-link:hover {
         border-color: #1DB954;
     }
-
     .album-link {
-    text-decoration: none; /* Empêche le soulignement par défaut */
-    color: inherit; /* Conserve la couleur du texte sans modification */
-}
-
-.album-link:hover {
-    color: inherit; /* Garde la couleur du texte inchangée au survol */
-    cursor: pointer; /* Change le curseur pour un effet de clic */
-}
+        text-decoration: none;
+        color: inherit;
+    }
+    .album-link:hover {
+        color: inherit;
+        cursor: pointer;
+    }
 </style>
 {% endblock %}
 
@@ -92,7 +103,11 @@
     <div class="container">
         <a href="/home" class="home-link">🏠 Accueil</a>
         <h1>🎶 Mes Albums Spotify</h1>
-        <div class="album-container">
+
+        <!-- 🔍 Barre de recherche -->
+        <input type="text" id="searchInput" class="search-bar" placeholder="Rechercher un album...">
+
+        <div class="album-container" id="albumContainer">
             {% for item in albums %}
                 <div class="album">
                     <a href="/album/{{ item.album.id }}" class="album-link">
@@ -105,4 +120,26 @@
             {% endfor %}
         </div>
     </div>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            let searchInput = document.getElementById("searchInput");
+            let albums = document.querySelectorAll(".album");
+
+            searchInput.addEventListener("keyup", function () {
+                let filter = searchInput.value.toLowerCase();
+
+                albums.forEach(album => {
+                    let title = album.querySelector("h3").innerText.toLowerCase();
+                    let artist = album.querySelector("p").innerText.toLowerCase();
+
+                    if (title.includes(filter) || artist.includes(filter)) {
+                        album.style.display = "block"; // ✅ Afficher l'élément correspondant
+                    } else {
+                        album.style.display = "none"; // ❌ Cacher les non correspondants
+                    }
+                });
+            });
+        });
+    </script>
 {% endblock %}
