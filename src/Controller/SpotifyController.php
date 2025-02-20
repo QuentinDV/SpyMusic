@@ -9,16 +9,22 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
 use App\Service\SpotifyAuth;
+use Symfony\Bundle\SecurityBundle\Security;
+use Doctrine\ORM\EntityManagerInterface;
 
 class SpotifyController extends AbstractController
 {
     private HttpClientInterface $client;
     private SpotifyAuth $spotifyAuth;
+    private Security $security;
+    private EntityManagerInterface $entityManager;
 
-    public function __construct(HttpClientInterface $client, SpotifyAuth $spotifyAuth)
+    public function __construct(HttpClientInterface $client, SpotifyAuth $spotifyAuth, Security $security, EntityManagerInterface $entityManager)
     {
         $this->client = $client;
         $this->spotifyAuth = $spotifyAuth; // Injecting the SpotifyAuth service
+        $this->security = $security;
+        $this->entityManager = $entityManager;
     }
 
     #[Route("/spotify", name: "spotify")]
@@ -56,8 +62,18 @@ class SpotifyController extends AbstractController
     #[Route("/spotify/home", name: "spotify_home")]
     public function home(Request $request): Response
     {
-        $session = $request->getSession();
-        $accessToken = $session->get('spotify_access_token');
+        // Récupérer l'utilisateur connecté
+        $user = $this->security->getUser();
+
+        $accessToken = $user->getAccessTokenDb();
+        $refreshToken = $user->getRefreshToken();
+
+        if (!$refreshToken) {
+            return $this->redirectToRoute('spotify');
+        }
+
+        $this->spotifyAuth->getValidAccessToken($accessToken, $refreshToken);
+        $accessToken = $user->getAccessTokenDb();
     
         if (!$accessToken) {
             return $this->redirectToRoute('spotify');
@@ -93,9 +109,20 @@ class SpotifyController extends AbstractController
     #[Route("/spotify/albums", name: "spotify_albums")]
     public function getAlbums(Request $request): Response
     {
-        $session = $request->getSession();
-        $accessToken = $session->get('spotify_access_token');
+        
+        // Récupérer l'utilisateur connecté
+        $user = $this->security->getUser();
 
+        $accessToken = $user->getAccessTokenDb();
+        $refreshToken = $user->getRefreshToken();
+
+        if (!$refreshToken) {
+            return $this->redirectToRoute('spotify');
+        }
+
+        $this->spotifyAuth->getValidAccessToken($accessToken, $refreshToken);
+        $accessToken = $user->getAccessTokenDb();
+    
         if (!$accessToken) {
             return $this->redirectToRoute('spotify');
         }
