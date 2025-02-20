@@ -109,11 +109,183 @@ class SpotifyController extends AbstractController
         ]);
     }
 
+    #[Route("/spotify/search", name: "spotify_search")]
+    public function search(Request $request): Response
+    {
+        $query = $request->query->get('q');
+        $accessToken = $request->getSession()->get('spotify_access_token');
+    
+        if (!$query || !$accessToken) {
+            return $this->json(['error' => 'Invalid request'], Response::HTTP_BAD_REQUEST);
+        }
+    
+        try {
+            // 🔹 Rechercher uniquement des albums sur Spotify
+            $response = $this->client->request('GET', 'https://api.spotify.com/v1/search', [
+                'headers' => ['Authorization' => 'Bearer ' . $accessToken],
+                'query' => [
+                    'q' => $query,
+                    'type' => 'album',
+                    'limit' => 5
+                ]
+            ]);
+    
+            $data = $response->toArray();
+            $albums = [];
+    
+            foreach ($data['albums']['items'] as $album) {
+                $albums[] = [
+                    'title' => $album['name'],
+                    'artist' => $album['artists'][0]['name'],
+                    'image' => $album['images'][0]['url'] ?? '',
+                    'url' => $album['external_urls']['spotify']
+                ];
+            }
+    
+            return $this->json(['albums' => $albums]);
+        } catch (\Exception $e) {
+            return $this->json(['error' => 'API error: ' . $e->getMessage()], Response::HTTP_INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    #[Route("/spotify/recommendations", name: "spotify_recommendations")]
+    public function recommendations(Request $request): Response
+    {
+        $accessToken = $request->getSession()->get('spotify_access_token');
+    
+        if (!$accessToken) {
+            return $this->json(['error' => 'No access token'], Response::HTTP_UNAUTHORIZED);
+        }
+    
+        try {
+            // 🔹 Récupération des artistes préférés de l'utilisateur
+            $response = $this->client->request('GET', 'https://api.spotify.com/v1/me/top/artists', [
+                'headers' => ['Authorization' => 'Bearer ' . $accessToken],
+                'query' => ['limit' => 5]
+            ]);
+    
+            $data = $response->toArray();
+            $topArtists = array_column($data['items'], 'id');
+    
+            if (empty($topArtists)) {
+                return $this->json(['error' => 'No top artists found'], Response::HTTP_NO_CONTENT);
+            }
+    
+            // 🔹 Récupération des recommandations
+            $seedArtists = implode(',', $topArtists);
+            $recommendationsResponse = $this->client->request('GET', 'https://api.spotify.com/v1/recommendations', [
+                'headers' => ['Authorization' => 'Bearer ' . $accessToken],
+                'query' => [
+                    'seed_artists' => $seedArtists,
+                    'limit' => 6
+                ]
+            ]);
+    
+            $recommendationsData = $recommendationsResponse->toArray();
+            $recommendedArtists = [];
+    
+            foreach ($recommendationsData['tracks'] as $track) {
+                $artist = $track['artists'][0];
+                $recommendedArtists[$artist['id']] = [
+                    'name' => $artist['name'],
+                    'image' => $artist['images'][0]['url'] ?? '',
+                    'url' => $artist['external_urls']['spotify']
+                ];
+            }
+    
+            return $this->json(['artists' => array_values($recommendedArtists)]);
+        } catch (\Exception $e) {
+            return $this->json(['error' => 'API error: ' . $e->getMessage()], Response::HTTP_INTERNAL_SERVER_ERROR);
+        }
+    }
+
     #[Route("/myalbums", name: "spotify_albums")]
     public function getAlbums(Request $request): Response
     {
-        
-        // Récupérer l'utilisateur connecté
+        $session = $request->getSession();
+        $accessToken = $session->get('spotify_access_token');
+
+        if (!$accessToken) {
+            return $this->redirectToRoute('spotify');
+        }
+
+        // Récupération des albums sauvegardés par l'utilisateur
+        $response = $this->client->request('GET', 'https://api.spotify.com/v1/me/albums', [
+            'headers' => [
+                'Authorization' => 'Bearer ' . $accessToken
+            ]
+        ]);
+
+        $albums = $response->toArray()['items'];
+
+        return $this->render('spotify/albums.html.twig', [
+            'albums' => $albums
+        ]);
+    }
+
+
+
+    #[Route("/spotify/genre/{genre}", name: "spotify_genre")]
+public function genrePage(Request $request, string $genre): Response
+{
+    $accessToken = $request->getSession()->get('spotify_access_token');
+
+    if (!$accessToken) {
+        return $this->redirectToRoute('spotify');
+    }
+
+    $recommendedAlbums = [];
+
+    try {
+        // 🔹 Étape 1 : Récupérer les artistes préférés de l'utilisateur
+        $topArtistsResponse = $this->client->request('GET', 'https://api.spotify.com/v1/me/top/artists', [
+            'headers' => ['Authorization' => 'Bearer ' . $accessToken],
+            'query' => ['limit' => 5] // Prendre les 5 artistes les plus écoutés
+        ]);
+
+        $topArtistsData = $topArtistsResponse->toArray();
+        $topArtists = array_column($topArtistsData['items'], 'id');
+
+        if (!empty($topArtists)) {
+            // 🔹 Étape 2 : Obtenir des recommandations basées sur ces artistes et le genre choisi
+            $seedArtists = implode(',', $topArtists);
+
+            $recommendationsResponse = $this->client->request('GET', 'https://api.spotify.com/v1/recommendations', [
+                'headers' => ['Authorization' => 'Bearer ' . $accessToken],
+                'query' => [
+                    'seed_artists' => $seedArtists,
+                    'seed_genres' => $genre,
+                    'limit' => 10
+                ]
+            ]);
+
+            $recommendationsData = $recommendationsResponse->toArray();
+
+            foreach ($recommendationsData['tracks'] as $track) {
+                $album = $track['album'];
+                $recommendedAlbums[$album['id']] = [
+                    'title' => $album['name'],
+                    'artist' => $album['artists'][0]['name'],
+                    'image' => $album['images'][0]['url'] ?? '',
+                    'url' => $album['external_urls']['spotify']
+                ];
+            }
+        }
+    } catch (\Exception $e) {
+        // Gestion d'erreur si l'API ne répond pas
+    }
+    
+    return $this->render('spotify/home.html.twig', [
+        'albums' => $albums ?? [], // S'assure que albums est toujours défini
+        'recommendedAlbums' => $recommendedAlbums ?? [], // S'assure que recommendedAlbums est toujours défini
+    ]);
+    
+}
+
+    #[Route("/album/{id}", name: "spotify_album_details")]
+    public function albumDetails(Request $request, string $id): Response
+    {
+
         $user = $this->security->getUser();
 
         if (!$user) {
@@ -133,18 +305,38 @@ class SpotifyController extends AbstractController
         if (!$accessToken) {
             return $this->redirectToRoute('spotify');
         }
-
-        // Récupération des albums sauvegardés par l'utilisateur
-        $response = $this->client->request('GET', 'https://api.spotify.com/v1/me/albums', [
-            'headers' => [
-                'Authorization' => 'Bearer ' . $accessToken
-            ]
-        ]);
-
-        $albums = $response->toArray()['items'];
-
-        return $this->render('spotify/albums.html.twig', [
-            'albums' => $albums
+        $accessToken = $request->getSession()->get('spotify_access_token');
+    
+        if (!$accessToken) {
+            return $this->redirectToRoute('spotify');
+        }
+    
+        try {
+            // 🔹 Récupération des détails de l'album
+            $albumResponse = $this->client->request('GET', "https://api.spotify.com/v1/albums/{$id}", [
+                'headers' => ['Authorization' => 'Bearer ' . $accessToken],
+            ]);
+    
+            $album = $albumResponse->toArray();
+    
+            // 🔹 Récupération des autres albums du même artiste
+            $artistId = $album['artists'][0]['id'];
+            $artistAlbumsResponse = $this->client->request('GET', "https://api.spotify.com/v1/artists/{$artistId}/albums", [
+                'headers' => ['Authorization' => 'Bearer ' . $accessToken],
+                'query' => ['include_groups' => 'album', 'limit' => 6]
+            ]);
+    
+            $artistAlbums = $artistAlbumsResponse->toArray()['items'];
+    
+        } catch (\Exception $e) {
+            return $this->render('spotify/error.html.twig', [
+                'message' => 'Impossible de charger les informations de l’album.'
+            ]);
+        }
+    
+        return $this->render('spotify/album.html.twig', [
+            'album' => $album,
+            'artistAlbums' => $artistAlbums,
         ]);
     }
 }

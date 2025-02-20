@@ -16,6 +16,21 @@
         padding: 20px;
     }
 
+     /* ---- Barre de recherche ---- */
+    .search-bar {
+        width: 100%;
+        padding: 10px;
+        margin-bottom: 15px;
+        border: none;
+        border-radius: 5px;
+        background: #282828;
+        color: #fff;
+        font-size: 1rem;
+    }
+    .search-bar::placeholder {
+        color: #b3b3b3;
+    }
+
     /* ---- Bibliothèque (gauche) ---- */
     .sidebar {
         width: 300px;
@@ -45,11 +60,39 @@
     .album-list li:hover {
         background: #282828;
     }
-    .album-list img {
+
+/* Supprime la couleur bleue des liens */
+    .album-link {
+        text-decoration: none;
+        color: inherit;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .album-link:hover {
+        color: inherit;
+    }
+
+    .album-item img {
         width: 50px;
         height: 50px;
         border-radius: 5px;
-        margin-right: 10px;
+    }
+    .album-item {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        background: #282828;
+        padding: 10px;
+        margin-bottom: 10px;
+        border-radius: 10px;
+        transition: transform 0.2s ease, background 0.2s ease;
+    }
+
+.album-item:hover {
+        transform: scale(1.05);
+        background: #333;
     }
     .album-info {
         flex-grow: 1;
@@ -58,10 +101,16 @@
         font-size: 0.9rem;
         margin: 0;
     }
-    .album-info p {
-        font-size: 0.8rem;
+  .album-info p {
+        font-size: 0.9rem;
         color: #b3b3b3;
+    }
+
+  .album-info h4, .album-info p {
         margin: 0;
+        font-size: 1rem;
+        color: white;
+        font-family: Arial, sans-serif;
     }
 
     /* ---- Contenu principal (droite) ---- */
@@ -111,19 +160,22 @@
         font-size: 1.5rem;
         margin-bottom: 15px;
     }
-    .category-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
-        gap: 15px;
+   .category-grid {
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+        justify-content: center;
     }
-    .category {
-        background: #282828;
+     .category {
         padding: 15px;
+        background: #282828;
         border-radius: 10px;
         text-align: center;
-        cursor: pointer;
-        transition: transform 0.3s ease, background 0.3s ease;
+        text-decoration: none;
+        color: white;
+        transition: background 0.3s ease;
     }
+
     .category:hover {
         background: #1DB954;
         transform: translateY(-5px);
@@ -158,62 +210,192 @@
         border-radius: 10px;
         margin-bottom: 10px;
     }
+
+    <style>
+     .global-search {
+        margin-top: 20px;
+        padding: 10px;
+        background: #282828;
+        border-radius: 10px;
+    }
+    .search-bar {
+        width: 100%;
+        padding: 10px;
+        border: none;
+        border-radius: 5px;
+        background: #333;
+        color: #fff;
+        font-size: 1rem;
+    }
+    .search-results {
+        list-style: none;
+        padding: 0;
+        margin-top: 10px;
+    }
+    .search-results li {
+        display: flex;
+        align-items: center;
+        padding: 10px;
+        background: #1c1c1c;
+        border-radius: 5px;
+        margin-bottom: 5px;
+        cursor: pointer;
+        transition: background 0.3s ease;
+    }
+    .search-results li:hover {
+        background: #1DB954;
+    }
+    .search-results img {
+        border-radius: 5px;
+        margin-right: 10px;
+    }
 </style>
 {% endblock %}
 
 {% block body %}
 <div class="main-container">
     <!-- Sidebar - Bibliothèque -->
-    <aside class="sidebar">  
-        <div class="library-container">
-        <a href="/myalbums"><h2>📚 Ma Bibliothèque</h2></a> </div>
+    <aside class="sidebar">
+        <h2>📚 Ma Bibliothèque</h2>
+        <input type="text" id="searchInput" class="search-bar" placeholder="🔍 Rechercher un album...">
         <ul class="album-list">
             {% for item in albums %}
-                <li>
-                    <img src="{{ item.album.images[0].url }}" alt="{{ item.album.name }}">
-                    <div class="album-info">
-                        <h4>{{ item.album.name }}</h4>
-                        <p>{{ item.album.artists[0].name }}</p>
-                    </div>
+                <li class="album-item">
+                    <a href="/album/{id: item.album.id}" class="album-link">
+                        <img src="{{ item.album.images[0].url }}" alt="{{ item.album.name }}">
+                        <div class="album-info">
+                            <h4>{{ item.album.name }}</h4>
+                            <p>{{ item.album.artists[0].name }}</p>
+                        </div>
+                    </a>
                 </li>
             {% endfor %}
         </ul>
     </aside>
+</div>
 
-    <!-- Contenu Principal -->
+
+    <!-- Contenu principal -->
     <section class="content">
-        <!-- Bannière de Bienvenue -->
         <div class="banner">
             <h1>🎵 Bienvenue sur SpyMusic</h1>
             <p>Achetez Vos Projets Préférés De Vos Artistes Préférés !</p>
         </div>
+       
 
-        <!-- Catégories -->
-        <div class="categories">
-            <h2>🎶 Parcourir par Genre</h2>
-            <div class="category-grid">
-                <div class="category">🎤 Rap</div>
-                <div class="category">🎸 Rock</div>
-                <div class="category">🎷 Jazz</div>
-                <div class="category">🎻 Classique</div>
-                <div class="category">🎧 Électro</div>
-                <div class="category">🎶 Pop</div>
-            </div>
-        </div>
-
-        <!-- Recommandations -->
-        <div class="recommendations">
-            <h2>🔥 Recommandé pour Vous</h2>
-            <div class="rec-grid">
-                {% for rec in recommendations %}
-                    <div class="rec-item">
-                        <img src="{{ rec.image }}" alt="{{ rec.title }}">
-                        <h4>{{ rec.title }}</h4>
-                        <p>{{ rec.artist }}</p>
-                    </div>
-                {% endfor %}
-            </div>
-        </div>
-    </section>
+    <!-- 🔹 Recherche d'albums -->
+<div class="global-search">
+    <h2>🔍 Rechercher un album</h2>
+    <input type="text" id="globalSearchInput" class="search-bar" placeholder="Entrez un album...">
+    <ul class="search-results" id="searchResults"></ul>
 </div>
+
+
+
+
+
+
+<!-- 🔹 Script pour la recherche dynamique -->
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        let searchInput = document.getElementById("searchInput");
+        let albumItems = document.querySelectorAll(".album-item");
+
+        searchInput.addEventListener("keyup", function () {
+            let filter = searchInput.value.toLowerCase();
+
+            albumItems.forEach(album => {
+                let title = album.querySelector("h4").innerText.toLowerCase();
+                let artist = album.querySelector("p").innerText.toLowerCase();
+
+                if (title.includes(filter) || artist.includes(filter)) {
+                    album.style.display = "flex"; // ✅ Afficher l'élément correspondant
+                } else {
+                    album.style.display = "none"; // ❌ Cacher les non correspondants
+                }
+            });
+        });
+    });
+</script>
+
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    let globalSearchInput = document.getElementById("globalSearchInput");
+    let searchResults = document.getElementById("searchResults");
+    let selectedGenre = document.getElementById("selectedGenre");
+    let artistResults = document.getElementById("artistResults");
+    let recommendationsSection = document.getElementById("recommendationsSection");
+    let categoriesSection = document.getElementById("categoriesSection");
+
+    // 🔹 Recherche d'albums
+    globalSearchInput.addEventListener("keyup", function () {
+        let query = globalSearchInput.value.trim();
+        if (query.length > 2) {
+            fetch(`/spotify/search?q=${query}`)
+                .then(response => response.json())
+                .then(data => {
+                    searchResults.innerHTML = "";
+                    if (!data.albums || data.albums.length === 0) {
+                        searchResults.innerHTML = "<li>Aucun album trouvé</li>";
+                        return;
+                    }
+                    data.albums.forEach(album => {
+                        let li = document.createElement("li");
+                        li.innerHTML = `
+                            <img src="${album.image}" alt="${album.title}" width="50">
+                            <div>
+                                <strong>${album.title}</strong> - ${album.artist}
+                                <a href="${album.url}" target="_blank">🎧 Écouter</a>
+                            </div>
+                        `;
+                        searchResults.appendChild(li);
+                    });
+
+                    // 🔹 Assurer que les catégories et recommandations restent visibles
+                    categoriesSection.style.display = "block";
+                    recommendationsSection.style.display = "block";
+                })
+                .catch(error => console.error("Erreur de recherche :", error));
+        } else {
+            searchResults.innerHTML = "";
+            categoriesSection.style.display = "block";
+            recommendationsSection.style.display = "block";
+        }
+    });
+
+    // 🔹 Gérer le clic sur les catégories
+    document.querySelectorAll(".category").forEach(category => {
+        category.addEventListener("click", function () {
+            let genre = this.getAttribute("data-genre");
+            selectedGenre.innerText = this.innerText;
+            recommendationsSection.style.display = "block";
+
+            fetch(`/spotify/recommendations?genre=${genre}`)
+                .then(response => response.json())
+                .then(data => {
+                    artistResults.innerHTML = "";
+                    if (!data.artists || data.artists.length === 0) {
+                        artistResults.innerHTML = "<p>Aucun artiste trouvé</p>";
+                        return;
+                    }
+                    data.artists.forEach(artist => {
+                        let div = document.createElement("div");
+                        div.classList.add("artist-item");
+                        div.innerHTML = `
+                            <img src="${artist.image}" alt="${artist.name}">
+                            <h4>${artist.name}</h4>
+                            <a href="${artist.url}" target="_blank">🎧 Écouter</a>
+                        `;
+                        artistResults.appendChild(div);
+                    });
+
+                    // 🔹 S'assurer que les sections restent visibles
+                    categoriesSection.style.display = "block";
+                    recommendationsSection.style.display = "block";
+                })
+                .catch(error => console.error("Erreur de récupération des artistes :", error));
+        });
+    });
+  });
+</script>
 {% endblock %}

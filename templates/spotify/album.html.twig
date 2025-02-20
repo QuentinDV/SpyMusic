@@ -1,0 +1,172 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ album.name }} - Détails de l'Album{% endblock %}
+
+{% block stylesheets %}
+<style>
+    body {
+        background-color: #121212;
+        color: #fff;
+        font-family: 'Arial', sans-serif;
+    }
+    .album-details-container {
+        max-width: 900px;
+        margin: auto;
+        padding: 30px;
+        text-align: center;
+    }
+    .album-info {
+        display: flex;
+        align-items: center;
+        gap: 30px;
+        background: #181818;
+        padding: 20px;
+        border-radius: 15px;
+        box-shadow: 0px 5px 15px rgba(255, 255, 255, 0.1);
+    }
+    .album-cover {
+        width: 250px;
+        border-radius: 15px;
+        transition: transform 0.3s ease;
+    }
+    .album-cover:hover {
+        transform: scale(1.05);
+    }
+    .album-meta {
+        text-align: left;
+    }
+    .album-meta h1 {
+        font-size: 2rem;
+        margin-bottom: 10px;
+    }
+    .album-meta p {
+        font-size: 1rem;
+        color: #b3b3b3;
+        margin-bottom: 5px;
+    }
+    .btn-spotify {
+        display: inline-block;
+        margin-top: 15px;
+        padding: 10px 20px;
+        background: #1DB954;
+        color: #fff;
+        border-radius: 25px;
+        text-decoration: none;
+        font-weight: bold;
+        transition: background 0.3s ease;
+    }
+    .btn-spotify:hover {
+        background: #18a848;
+    }
+    .tracklist {
+        margin-top: 30px;
+        text-align: left;
+        background: #181818;
+        padding: 20px;
+        border-radius: 15px;
+        box-shadow: 0px 5px 15px rgba(255, 255, 255, 0.1);
+    }
+    .tracklist h2 {
+        margin-bottom: 15px;
+        color: #1DB954;
+    }
+    .tracklist ol {
+        padding-left: 20px;
+    }
+    .tracklist li {
+        margin-bottom: 8px;
+    }
+    .other-albums {
+        margin-top: 40px;
+        text-align: center;
+    }
+    .other-albums h2 {
+        color: #1DB954;
+        margin-bottom: 15px;
+    }
+    .album-list {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+        gap: 15px;
+    }
+    .album-card {
+        background: #282828;
+        padding: 15px;
+        border-radius: 10px;
+        text-align: center;
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+    .album-card:hover {
+        transform: scale(1.05);
+        box-shadow: 0px 5px 10px rgba(255, 255, 255, 0.2);
+    }
+    .album-card img {
+        width: 120px;
+        height: 120px;
+        border-radius: 10px;
+    }
+    .album-card p {
+        font-size: 1rem;
+        margin-top: 10px;
+        color: #fff;
+    }
+    .btn-back {
+        display: inline-block;
+        margin-top: 30px;
+        padding: 12px 25px;
+        background: #555;
+        color: white;
+        border-radius: 25px;
+        text-decoration: none;
+        font-size: 1rem;
+        transition: background 0.3s ease;
+    }
+    .btn-back:hover {
+        background: #777;
+    }
+</style>
+{% endblock %}
+
+{% block body %}
+<div class="album-details-container">
+    <!-- Album Info -->
+    <div class="album-info">
+        <img src="{{ album.images[0].url }}" alt="{{ album.name }}" class="album-cover">
+        <div class="album-meta">
+            <h1>{{ album.name }}</h1>
+            <p><strong>🎤 Artiste :</strong> {{ album.artists[0].name }}</p>
+            <p><strong>📅 Sortie :</strong> {{ album.release_date }}</p>
+            <p><strong>🎵 Nombre de pistes :</strong> {{ album.total_tracks }}</p>
+            <a href="{{ album.external_urls.spotify }}" target="_blank" class="btn-spotify">🎧 Écouter sur Spotify</a>
+        </div>
+    </div>
+
+    <!-- Liste des morceaux -->
+    <div class="tracklist">
+        <h2>🎼 Liste des morceaux</h2>
+        <ol>
+            {% for track in album.tracks.items %}
+                <li>{{ track.track_number }}. {{ track.name }} - {{ (track.duration_ms / 60000)|round(2) }} min</li>
+            {% endfor %}
+        </ol>
+    </div>
+
+    <!-- Autres albums de l'artiste -->
+    <div class="other-albums">
+        <h2>📀 Autres albums de {{ album.artists[0].name }}</h2>
+        <div class="album-list">
+            {% for other_album in artistAlbums %}
+                <div class="album-card">
+                    <a href="{{ path('spotify_album_details', {id: other_album.id}) }}">
+                        <img src="{{ other_album.images[0].url }}" alt="{{ other_album.name }}">
+                        <p>{{ other_album.name }}</p>
+                    </a>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+
+    <!-- Bouton retour -->
+    <a href="{{ path('spotify_home') }}" class="btn-back">⬅ Retour à l'accueil</a>
+</div>
+{% endblock %}
