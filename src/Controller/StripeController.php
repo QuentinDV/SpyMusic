@@ -34,11 +34,8 @@ class StripeController extends AbstractController
 
         // Récupérer le total du panier
         $cartItems = $this->entityManager->getRepository(Cart::class)->findBy(['user' => $user]);
-        $totalAmount = 0;
+        $totalAmount = array_sum(array_map(fn($item) => $item->getTotalPrice(), $cartItems));
 
-        foreach ($cartItems as $item) {
-            $totalAmount += $item->getQuantity() * $item->getProduct()->getPrice(); // Assure-toi que `getProduct()->getPrice()` existe
-        }
 
         if ($totalAmount <= 0) {
             return new Response('Le panier est vide', Response::HTTP_BAD_REQUEST);

@@ -238,7 +238,7 @@
                     <span>Total</span>
                     <span>Supprimer</span>
                 </div>
-
+                {% set total = 0 %}
                 {% for item in cartItems %}
                 <div class="cart-item">
                     <div class="product-info">
@@ -250,6 +250,7 @@
                     </div>
                         <span class="quantity">{{ item.quantity }}</span>
                         <span class="total-price">{{ item.totalPrice }} €</span>
+                        {% set total = total + item.totalPrice %}
                         
                         <!-- Formulaire de suppression -->
                         <form action="{{ path('cart_remove', {'id': item.cartId}) }}" method="POST" style="display:inline;">
@@ -269,7 +270,7 @@
                     
                     <div class="price-row">
                         <strong>Total</strong>
-                        <strong> €</strong>
+                        <strong>{{ total }} €</strong>
                     </div>
                 </div>
 
@@ -278,7 +279,7 @@
                     <span>90 Day Limited Warranty against manufacturer's defects</span>
                 </div>
 
-                <button class="checkout-btn">Checkout Now</button>
+                <button class="checkout-btn"><a href="/payment">Checkout Now</a></button>
             </div>
         </div>
 
