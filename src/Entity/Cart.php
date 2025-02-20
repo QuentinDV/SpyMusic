@@ -21,6 +21,9 @@ class Cart
     #[ORM\Column(length: 255)]
     private ?string $albumId = null;
 
+    #[ORM\Column(length: 20)]
+    private ?string $type = null;
+
     #[ORM\Column(type: 'integer', options: ['default' => 1])]
     private int $quantity = 1;
 

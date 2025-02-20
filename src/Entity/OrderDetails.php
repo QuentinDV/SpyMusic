@@ -21,6 +21,9 @@ class OrderDetails
     #[ORM\Column(length: 255)]
     private ?string $albumId = null;
 
+    #[ORM\Column(length: 20)]
+    private ?string $type = null;
+
     #[ORM\Column(type: 'integer')]
     private ?int $quantity = null;
 
