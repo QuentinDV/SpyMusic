@@ -18,9 +18,8 @@ class OrderDetails
     #[ORM\JoinColumn(name: 'order_id', referencedColumnName: 'order_id', nullable: false, onDelete: 'CASCADE')]
     private ?Orders $order = null;
 
-    #[ORM\ManyToOne(targetEntity: Products::class)]
-    #[ORM\JoinColumn(name: 'product_id', referencedColumnName: 'product_id', nullable: false, onDelete: 'CASCADE')]
-    private ?Products $product = null;
+    #[ORM\Column(length: 255)]
+    private ?string $albumId = null;
 
     #[ORM\Column(type: 'integer')]
     private ?int $quantity = null;

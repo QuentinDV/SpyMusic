@@ -18,9 +18,8 @@ class Reviews
     #[ORM\JoinColumn(name: 'user_id', referencedColumnName: 'user_id', nullable: false, onDelete: 'CASCADE')]
     private ?Users $user = null;    
 
-    #[ORM\ManyToOne(targetEntity: Products::class)] // Changement pour lier à un produit
-    #[ORM\JoinColumn(name: 'product_id', referencedColumnName: 'product_id', nullable: false, onDelete: 'CASCADE')]
-    private ?Products $product = null;
+    #[ORM\Column(length: 255)]
+    private ?string $albumId = null;
 
     #[ORM\Column(type: 'integer')]
     private ?int $rating = null;
