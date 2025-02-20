@@ -32,13 +32,11 @@ class SpotifyController extends AbstractController
     {
         $clientId = $_ENV['SPOTIFY_CLIENT_ID'];
         $redirectUri = $_ENV['SPOTIFY_REDIRECT_URI'];
-        $scope = 'user-library-read'; // Permet de lire les albums sauvegardés par l'utilisateur
-
+        $scope = 'user-library-read';
+    
         $authUrl = "https://accounts.spotify.com/authorize?response_type=code&client_id=$clientId&redirect_uri=" . urlencode($redirectUri) . "&scope=" . urlencode($scope);
-
-        return $this->render('spotify/index.html.twig', [
-            'authUrl' => $authUrl
-        ]);
+    
+        return $this->redirect($authUrl);
     }
 
     #[Route("/spotify/callback", name: "spotify_callback")]
@@ -59,7 +57,7 @@ class SpotifyController extends AbstractController
         return $this->redirectToRoute('spotify_home');
     }
     
-    #[Route("/spotify/home", name: "spotify_home")]
+    #[Route("/home", name: "spotify_home")]
     public function home(Request $request): Response
     {
         // Récupérer l'utilisateur connecté
@@ -87,7 +85,8 @@ class SpotifyController extends AbstractController
             ]);
             $albums = $response->toArray()['items'];
         } catch (\Exception $e) {
-            // Gestion d'erreur si l'API ne répond pas
+            // Si une erreur survient, on redirige l'utilisateur vers la page de connexion
+            return $this->redirectToRoute('spotify');
         }
     
         // Données factices pour les recommandations
@@ -106,7 +105,7 @@ class SpotifyController extends AbstractController
         ]);
     }
 
-    #[Route("/spotify/albums", name: "spotify_albums")]
+    #[Route("/albums", name: "spotify_albums")]
     public function getAlbums(Request $request): Response
     {
         

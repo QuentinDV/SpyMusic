@@ -23,7 +23,7 @@ security:
       form_login:
         login_path: login
         check_path: login
-        default_target_path: /profile
+        default_target_path: /spotify
         username_parameter: email # Assure que le champ email est utilisé
         password_parameter: password # Symfony attend déjà "password"
       logout:
