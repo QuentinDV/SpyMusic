@@ -136,6 +136,11 @@ class Users implements UserInterface, PasswordAuthenticatedUserInterface
     // Implémentation des rôles (méthode exigée par UserInterface)
     public function getRoles(): array
     {
-        return ['ROLE_' . strtoupper($this->role)];
+        $roles = ['ROLE_USER']; 
+        if ($this->role) {
+            $roles[] = 'ROLE_' . strtoupper($this->role); 
+        }
+
+        return $roles;
     }
 }
