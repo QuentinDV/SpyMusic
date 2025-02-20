@@ -30,9 +30,6 @@ class RegistrationFormType extends AbstractType
                 'first_options' => ['label' => 'Mot de passe'],
                 'second_options' => ['label' => 'Confirmer le mot de passe'],
                 'invalid_message' => 'Les mots de passe doivent correspondre.',
-            ])
-            ->add('submit', SubmitType::class, [
-                'label' => 'S\'inscrire'
             ]);
     }
 

@@ -11,12 +11,13 @@
     }
     .main-container {
         display: flex;
+        flex-direction: column;
         max-width: 1400px;
         margin: auto;
         padding: 20px;
     }
 
-     /* ---- Barre de recherche ---- */
+    /* ---- Barre de recherche ---- */
     .search-bar {
         width: 100%;
         padding: 10px;
@@ -31,92 +32,58 @@
         color: #b3b3b3;
     }
 
-    /* ---- Bibliothèque (gauche) ---- */
-    .sidebar {
-        width: 300px;
-        background: #000;
-        padding: 20px;
-        border-radius: 10px;
-        height: 85vh;
-        overflow-y: auto;
+    /* ---- Bibliothèque ---- */
+    .library-container {
+        margin-top: 20px;
     }
-    .sidebar h2 {
+    .library-container h2 {
         font-size: 1.3rem;
         color: #1DB954;
         margin-bottom: 15px;
     }
     .album-list {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 15px;
         list-style: none;
         padding: 0;
     }
-    .album-list li {
-        display: flex;
-        align-items: center;
-        padding: 10px;
-        border-radius: 5px;
-        cursor: pointer;
-        transition: background 0.3s ease;
-    }
-    .album-list li:hover {
-        background: #282828;
-    }
-
-/* Supprime la couleur bleue des liens */
-    .album-link {
-        text-decoration: none;
-        color: inherit;
-        display: flex;
-        align-items: center;
-        gap: 10px;
-    }
-
-    .album-link:hover {
-        color: inherit;
-    }
-
-    .album-item img {
-        width: 50px;
-        height: 50px;
-        border-radius: 5px;
-    }
     .album-item {
         display: flex;
+        flex-direction: column;
         align-items: center;
-        gap: 10px;
         background: #282828;
         padding: 10px;
-        margin-bottom: 10px;
         border-radius: 10px;
         transition: transform 0.2s ease, background 0.2s ease;
     }
-
-.album-item:hover {
+    .album-item:hover {
         transform: scale(1.05);
         background: #333;
     }
+    .album-item img {
+        width: 100%;
+        height: auto;
+        border-radius: 5px;
+    }
     .album-info {
-        flex-grow: 1;
+        text-align: center;
+        margin-top: 10px;
     }
     .album-info h4 {
-        font-size: 0.9rem;
+        font-size: 1rem;
         margin: 0;
+        color: white;
     }
-  .album-info p {
+    .album-info p {
         font-size: 0.9rem;
         color: #b3b3b3;
     }
 
-  .album-info h4, .album-info p {
-        margin: 0;
-        font-size: 1rem;
-        color: white;
-        font-family: Arial, sans-serif;
-    }
-
-    /* ---- Contenu principal (droite) ---- */
+    /* ---- Contenu principal ---- */
     .content {
         flex-grow: 1;
-        margin-left: 20px;
+        margin-bottom: 20px;
     }
     .banner {
         background: linear-gradient(45deg, #333, #1DB954);
@@ -127,89 +94,6 @@
     .banner h1 {
         font-size: 2rem;
         margin: 0;
-    }
-
-    .library-container a {
-        position: relative;
-        text-decoration: none;
-        color: inherit;
-    }
-
-    .library-container a::after {
-        content: "";
-        position: absolute;
-        left: 0;
-        bottom: -3px;
-        width: 100%;
-        height: 2px;
-        background-color: #1DB954;
-        transform: scaleX(0);
-        transform-origin: left;
-        transition: transform 0.3s ease-in-out;
-    }
-
-    .library-container a:hover::after {
-        transform: scaleX(1);
-    }
-
-    /* ---- Catégories ---- */
-    .categories {
-        margin-top: 30px;
-    }
-    .categories h2 {
-        font-size: 1.5rem;
-        margin-bottom: 15px;
-    }
-   .category-grid {
-        display: flex;
-        gap: 10px;
-        flex-wrap: wrap;
-        justify-content: center;
-    }
-     .category {
-        padding: 15px;
-        background: #282828;
-        border-radius: 10px;
-        text-align: center;
-        text-decoration: none;
-        color: white;
-        transition: background 0.3s ease;
-    }
-
-    .category:hover {
-        background: #1DB954;
-        transform: translateY(-5px);
-    }
-
-    /* ---- Recommandations ---- */
-    .recommendations {
-        margin-top: 30px;
-    }
-    .recommendations h2 {
-        font-size: 1.5rem;
-        margin-bottom: 15px;
-    }
-    .library-container a {
-        position: relative;
-        text-decoration: none;
-        color: inherit;
-    }
-
-    .library-container a::after {
-        content: "";
-        position: absolute;
-        left: 0;
-        bottom: -3px;
-        width: 100%;
-        height: 2px;
-        background-color: #1DB954;
-        transform: scaleX(0);
-        transform-origin: left;
-        transition: transform 0.3s ease-in-out;
-    }
-
-    .library-container a:hover::after {
-        transform: scaleX(1);
     }
 
     .rec-grid {
@@ -234,21 +118,11 @@
         margin-bottom: 10px;
     }
 
-    <style>
-     .global-search {
+    .global-search {
         margin-top: 20px;
         padding: 10px;
         background: #282828;
         border-radius: 10px;
-    }
-    .search-bar {
-        width: 100%;
-        padding: 10px;
-        border: none;
-        border-radius: 5px;
-        background: #333;
-        color: #fff;
-        font-size: 1rem;
     }
     .search-results {
         list-style: none;
@@ -277,48 +151,39 @@
 
 {% block body %}
 <div class="main-container">
-    <!-- Sidebar - Bibliothèque -->
-    <aside class="sidebar">
-        <div class="library-container">
-            <a href="/myalbums"><h2>📚 Ma Bibliothèque</h2></a>
-        </div>
-        <input type="text" id="searchInput" class="search-bar" placeholder="🔍 Rechercher un album...">
-        <ul class="album-list">
-            {% for item in albums %}
-                <li class="album-item">
-                    <a href="/album/{{ item.album.id }}" class="album-link">
-                        <img src="{{ item.album.images[0].url }}" alt="{{ item.album.name }}">
-                        <div class="album-info">
-                            <h4>{{ item.album.name }}</h4>
-                            <p>{{ item.album.artists[0].name }}</p>
-                        </div>
-                    </a>
-                </li>
-            {% endfor %}
-        </ul>
-    </aside>
-</div>
-
-
     <!-- Contenu principal -->
     <section class="content">
         <div class="banner">
             <h1>🎵 Bienvenue sur SpyMusic</h1>
             <p>Achetez Vos Projets Préférés De Vos Artistes Préférés !</p>
         </div>
-       
 
-    <!-- 🔹 Recherche d'albums -->
-<div class="global-search">
-    <h2>🔍 Rechercher un album</h2>
-    <input type="text" id="globalSearchInput" class="search-bar" placeholder="Entrez un album...">
-    <ul class="search-results" id="searchResults"></ul>
+        <!-- 🔹 Recherche d'albums -->
+        <div class="global-search">
+            <h2>🔍 Rechercher un album</h2>
+            <input type="text" id="globalSearchInput" class="search-bar" placeholder="Entrez un album...">
+            <ul class="search-results" id="searchResults"></ul>
+        </div>
+
+        <!-- Bibliothèque -->
+        <div class="library-container">
+            <h2>📚 Ma Bibliothèque</h2>
+            <ul class="album-list">
+                {% for item in albums %}
+                    <li class="album-item">
+                        <a href="/album/{{ item.album.id }}" class="album-link">
+                            <img src="{{ item.album.images[0].url }}" alt="{{ item.album.name }}">
+                            <div class="album-info">
+                                <h4>{{ item.album.name }}</h4>
+                                <p>{{ item.album.artists[0].name }}</p>
+                            </div>
+                        </a>
+                    </li>
+                {% endfor %}
+            </ul>
+        </div>
+    </section>
 </div>
-
-
-
-
-
 
 <!-- 🔹 Script pour la recherche dynamique -->
 <script>

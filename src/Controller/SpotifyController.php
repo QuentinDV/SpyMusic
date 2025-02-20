@@ -112,15 +112,37 @@ class SpotifyController extends AbstractController
     #[Route("/spotify/search", name: "spotify_search")]
     public function search(Request $request): Response
     {
-        $query = $request->query->get('q');
-        $accessToken = $request->getSession()->get('spotify_access_token');
+        $user = $this->security->getUser();
     
-        if (!$query || !$accessToken) {
-            return $this->json(['error' => 'Invalid request'], Response::HTTP_BAD_REQUEST);
+        if (!$user) {
+            return $this->redirectToRoute('login');
+        }
+    
+        $accessToken = $user->getAccessTokenDb();
+        $refreshToken = $user->getRefreshToken();
+    
+        if (!$refreshToken) {
+            return $this->redirectToRoute('spotify');
+        }
+    
+        // Vérifie si le token est encore valide, sinon le rafraîchir
+        $this->spotifyAuth->getValidAccessToken($accessToken, $refreshToken);
+        $accessToken = $user->getAccessTokenDb(); // Récupérer le token mis à jour
+    
+        if (!$accessToken) {
+            return $this->redirectToRoute('spotify');
+        }
+    
+        // 🔹 Récupération de la requête utilisateur
+        $query = trim($request->query->get('q')); // ✅ Correction ici
+    
+        // ✅ Vérifier si la requête est valide
+        if (!$query || strlen($query) < 2) {
+            return $this->json(['error' => 'Invalid request: Query too short'], Response::HTTP_BAD_REQUEST);
         }
     
         try {
-            // 🔹 Rechercher uniquement des albums sur Spotify
+            // 🔹 Effectuer la requête à Spotify
             $response = $this->client->request('GET', 'https://api.spotify.com/v1/search', [
                 'headers' => ['Authorization' => 'Bearer ' . $accessToken],
                 'query' => [
@@ -130,23 +152,42 @@ class SpotifyController extends AbstractController
                 ]
             ]);
     
+            // 🔎 Vérifier le statut HTTP
+            if ($response->getStatusCode() !== 200) {
+                return $this->json([
+                    'error' => 'Spotify API error',
+                    'status' => $response->getStatusCode(),
+                    'message' => $response->getContent(false) // Récupère le message brut de Spotify
+                ], Response::HTTP_BAD_REQUEST);
+            }
+    
             $data = $response->toArray();
             $albums = [];
     
+            // 🔹 Vérifier si des albums existent
+            if (!isset($data['albums']['items']) || empty($data['albums']['items'])) {
+                return $this->json(['error' => 'No albums found'], Response::HTTP_NOT_FOUND);
+            }
+    
+            // 🖼️ Formater les résultats
             foreach ($data['albums']['items'] as $album) {
                 $albums[] = [
                     'title' => $album['name'],
                     'artist' => $album['artists'][0]['name'],
-                    'image' => $album['images'][0]['url'] ?? '',
+                    'image' => $album['images'][0]['url'] ?? 'default.jpg',
                     'url' => $album['external_urls']['spotify']
                 ];
             }
     
             return $this->json(['albums' => $albums]);
         } catch (\Exception $e) {
-            return $this->json(['error' => 'API error: ' . $e->getMessage()], Response::HTTP_INTERNAL_SERVER_ERROR);
+            return $this->json([
+                'error' => 'API error',
+                'message' => $e->getMessage()
+            ], Response::HTTP_INTERNAL_SERVER_ERROR);
         }
     }
+    
 
     #[Route("/spotify/recommendations", name: "spotify_recommendations")]
     public function recommendations(Request $request): Response
