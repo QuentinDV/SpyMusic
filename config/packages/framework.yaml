@@ -4,7 +4,7 @@ framework:
 
   # Note that the session will be started ONLY if you read or write from it.
   session: true
-  error_controller: 'App\Controller\ErrorController::errorPage'
+  
 
   #esi: true
   #fragments: true

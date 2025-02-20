@@ -206,6 +206,16 @@
             color: #666;
             margin: 1rem 0;
         }
+
+        .album-link {
+            text-decoration: none; /* Empêche le soulignement par défaut */
+            color: inherit; /* Conserve la couleur du texte sans modification */
+        }
+
+        .album-link:hover {
+            color: inherit; /* Garde la couleur du texte inchangée au survol */
+            cursor: pointer; /* Change le curseur pour un effet de clic */
+        }
         
     </style>
 </head>
@@ -213,65 +223,49 @@
     <div class="container">
         <header>
             <div class="logo">
-                <span class="meenu"> <a href="" > </a>☰</a></span>
-                <span class="meenu"><a href="" > SpyMusic</a></span>
+                <span class="meenu"><a href="/home" style=" text-decoration: none;color: inherit;"> Acceuil</a></span>
             </div>
-            <button class="meenu">Profile</button>
+            <button class="meenu"><a href="/profile" style=" text-decoration: none;color: inherit;" >Profile</a></button>
         </header>
         
-        <h1>Your Shopping Cart</h1>
+        <h1>Votre Panier</h1>
 
         <div class="main-content">
             <div class="cart-items">
                 <div class="cart-header">
-                    <span>Product Code</span>
-                    <span>Quantity</span>
+                    <span>Produit</span>
+                    <span>Quantité</span>
                     <span>Total</span>
-                    <span>Action</span>
+                    <span>Supprimer</span>
                 </div>
 
+                {% for item in cartItems %}
                 <div class="cart-item">
                     <div class="product-info">
-                        <img src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/image-5t2Q2eWRqekLpmQKxr8EsqZ1iRJ7jQ.png" alt="Furniture Set" class="product-image">
+                        <a href="/album/{{ item.albumId }}" ><img src="{{ item.albumImage }}" alt="Furniture Set" class="product-image" > </a>
                         <div>
-                            <h3>Furniture Set</h3>
-                            <p>nom du produit</p>
+                            <a href="/album/{{ item.albumId }}"class="album-link" ><h3>{{ item.albumTitle }}</h3></a>
+                            <p>{{ item.artistName }} - {{ item.type }}</p>
                         </div>
                     </div>
-                    <div class="quantity-controls">
-                        <button class="quantity-btn" onclick="updateQuantity(this, -1)">-</button>
-                        <span class="quantity">4</span>
-                        <button class="quantity-btn" onclick="updateQuantity(this, 1)">+</button>
-                    </div>
-                    <span class="total-price">$437</span>
-                    <button class="delete-btn">🗑</button>
+                        <span class="quantity">{{ item.quantity }}</span>
+                        <span class="total-price">{{ item.totalPrice }} €</span>
+                        <button class="delete-btn">🗑</button>
                 </div>
-
-                <!-- Repeat similar structure for other items -->
+                {% else %}
+                <p>No items in your cart.</p>
+                {% endfor %}
             </div>
 
+
             <div class="order-summary">
-                <h2>Order Summary</h2>
-                <div class="voucher-input">
-                    <input type="text" placeholder="Discount voucher">
-                    <button class="apply-btn">Apply</button>
-                </div>
+                <h2>Résumé de la commande</h2>
 
                 <div class="price-breakdown">
-                    <div class="price-row">
-                        <span>Sub Total</span>
-                        <span>0000 USD</span>
-                    </div>
-                    <div class="price-row">
-                        <span>0000 USD</span>
-                    </div>
-                    <div class="price-row">
-                        <span>Delivery fee</span>
-                        <span>0000 USD</span>
-                    </div>
+                    
                     <div class="price-row">
                         <strong>Total</strong>
-                        <strong>$0000 USD</strong>
+                        <strong> €</strong>
                     </div>
                 </div>
 
@@ -284,28 +278,6 @@
             </div>
         </div>
 
-        <footer>
-            <h2>Craft Own Furniture</h2>
-            <p>Build custom furniture</p>
-            
-            <div class="social-links">
-                <a href="#" class="social-link">Facebook</a>
-                <a href="#" class="social-link">Instagram</a>
-                <a href="#" class="social-link">Twitter</a>
-                <a href="#" class="social-link">LinkedIn</a>
-            </div>
-        </footer>
     </div>
-    <script>
-        function updateQuantity(button, change) {
-            let quantitySpan = button.parentElement.querySelector('.quantity');
-            let currentQuantity = parseInt(quantitySpan.textContent);
-            let newQuantity = currentQuantity + change;
-
-            if (newQuantity > 0) {
-                quantitySpan.textContent = newQuantity;
-            }
-        }
-    </script>
 </body>
 </html>

@@ -286,8 +286,8 @@
                 <p>Édition standard CD.</p>
                 {% if form_cd is defined %}
                     {{ form_start(form_cd, { 'action': path('cart_add'), 'attr': {'class': 'cart-form'} }) }}
-                        {{ form_widget(form_cd.albumId) }}
-                        {{ form_widget(form_cd.type) }}
+                        {{ form_widget(form_cd.albumId, { 'value': album.id }) }}
+                        {{ form_widget(form_cd.type, { 'value': 'CD' }) }}
                         <label for="{{ form_cd.quantity.vars.id }}">Quantité :</label>
                         {{ form_widget(form_cd.quantity, { 'attr': {'min': 1} }) }}
                         <button type="submit" class="add-to-cart">🛒 Ajouter au panier</button>
@@ -306,8 +306,8 @@
                 <p>Édition standard Vinyle.</p>
                 {% if form_vinyle is defined %}
                     {{ form_start(form_vinyle, { 'action': path('cart_add'), 'attr': {'class': 'cart-form'} }) }}
-                        {{ form_widget(form_vinyle.albumId) }}
-                        {{ form_widget(form_vinyle.type) }}
+                        {{ form_widget(form_vinyle.albumId, { 'value': album.id }) }}
+                        {{ form_widget(form_vinyle.type, { 'value': 'Vinyle' }) }}
                         <label for="{{ form_vinyle.quantity.vars.id }}">Quantité :</label>
                         {{ form_widget(form_vinyle.quantity, { 'attr': {'min': 1} }) }}
                         <button type="submit" class="add-to-cart">🛒 Ajouter au panier</button>

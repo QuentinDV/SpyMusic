@@ -21,11 +21,23 @@ class Cart
     #[ORM\Column(length: 255)]
     private ?string $albumId = null;
 
+    #[ORM\Column(length: 255)]
+    private ?string $albumImage = null;
+
+    #[ORM\Column(length: 255)]
+    private ?string $albumTitle = null;
+
+    #[ORM\Column(length: 255)]
+    private ?string $artistName = null;
+
     #[ORM\Column(length: 20)]
     private ?string $type = null;
 
     #[ORM\Column(type: 'integer', options: ['default' => 1])]
     private int $quantity = 1;
+
+    #[ORM\Column(type: 'integer', options: ['default' => 0])]
+    private int $totalPrice = 0;
 
     #[ORM\Column(type: 'datetime', options: ['default' => 'CURRENT_TIMESTAMP'])]
     private ?\DateTimeInterface $addedAt = null;
@@ -73,6 +85,48 @@ class Cart
         return $this;
     }
 
+    // Getters pour albumImage
+    public function getAlbumImage(): ?string
+    {
+        return $this->albumImage;
+    }
+
+    // Setters pour albumImage
+    public function setAlbumImage(string $albumImage): self
+    {
+        $this->albumImage = $albumImage;
+
+        return $this;
+    }
+
+    // Getters pour albumTitle
+    public function getAlbumTitle(): ?string
+    {
+        return $this->albumTitle;
+    }
+
+    // Setters pour albumTitle
+    public function setAlbumTitle(string $albumTitle): self
+    {
+        $this->albumTitle = $albumTitle;
+
+        return $this;
+    }
+
+    // Getters pour artistName
+    public function getArtistName(): ?string
+    {
+        return $this->artistName;
+    }
+
+    // Setters pour artistName
+    public function setArtistName(string $artistName): self
+    {
+        $this->artistName = $artistName;
+
+        return $this;
+    }
+
     // Getters pour type
     public function getType(): ?string
     {
@@ -115,16 +169,16 @@ class Cart
         return $this;
     }
 
-    // Getters pour totalAmount
-    public function getTotalAmount(): ?float
+    // Getters pour totalPrice
+    public function getTotalPrice(): ?int
     {
-        return $this->totalAmount;
+        return $this->totalPrice;
     }
 
-    // Setters pour totalAmount
-    public function setTotalAmount(float $totalAmount): self
+    // Setters pour totalPrice
+    public function setTotalPrice(int $totalPrice): self
     {
-        $this->totalAmount = $totalAmount;
+        $this->totalPrice = $totalPrice;
 
         return $this;
     }
