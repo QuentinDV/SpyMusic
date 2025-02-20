@@ -289,15 +289,22 @@ class AdminRouterSubscriber implements EventSubscriberInterface
     {
         $routeName = $request->query->get(EA::ROUTE_NAME);
         $routeParams = $request->query->all()[EA::ROUTE_PARAMS] ?? [];
-        // the "relative path" URL type is needed to be compatible with applications
-        // running behind a proxy under a permanent subpath prefix (AKA sub-folder,
-        // sub-url or sub-path - using the HTTP header x-forwarded-prefix)
-        $url = $this->urlGenerator->generate($routeName, $routeParams, UrlGeneratorInterface::RELATIVE_PATH);
+        $url = $this->urlGenerator->generate($routeName, $routeParams, UrlGeneratorInterface::ABSOLUTE_PATH);
 
         $newRequest = $request->duplicate();
         $newRequest->attributes->remove('_controller');
         $newRequest->attributes->set('_route', $routeName);
         $newRequest->attributes->add($routeParams);
+
+        // If the application is running behind a proxy under a permanent
+        // subpath prefix (AKA sub-folder, sub-url or sub-path) using the HTTP
+        // header x-forwarded-prefix, the URL is generated with
+        // that prefix. We need to remove it before we can match it.
+        $basePath = $request->getBasePath();
+        if ('' !== $request->getBasePath() && str_starts_with($url, $basePath)) {
+            $url = mb_substr($url, mb_strlen($basePath));
+        }
+
         $newRequest->server->set('REQUEST_URI', $url);
 
         $parameters = $this->requestMatcher->matchRequest($newRequest);

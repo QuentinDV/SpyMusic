@@ -2,61 +2,45 @@
 
 namespace App\Controller;
 
-use PayPalCheckoutSdk\Payments\OrdersCreateRequest;
-use PayPalCheckoutSdk\Payments\OrdersCaptureRequest;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\Routing\Annotation\Route;
 use App\Service\PayPalService;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Routing\Annotation\Route;
 
 class PayPalController extends AbstractController
 {
+    private PayPalService $payPalService;
+
+    public function __construct(PayPalService $payPalService)
+    {
+        $this->payPalService = $payPalService;
+    }
+
     #[Route('/paypal/payment', name: 'paypal_payment')]
-    public function createPayment(Request $request, PayPalService $paypalService)
+    public function createPayment(): Response
     {
-        $amount = '10.00'; // Montant du paiement
-        $currency = 'EUR'; // Devise
+        $amount = 10.00; // Montant à tester
+        $currency = 'USD'; // Devise
 
-        // Créer le paiement avec l'API PayPal
-        $payment = $paypalService->createPayment($amount, $currency);
+        $response = $this->payPalService->createPayment($amount, $currency);
 
-        // Si la création du paiement est réussie, rediriger l'utilisateur vers PayPal
-        if (isset($payment->result->links)) {
-            foreach ($payment->result->links as $link) {
-                if ($link->rel === 'approve') {
-                    return $this->redirect($link->href); // Redirection vers PayPal
-                }
-            }
+        if ($response === null) {
+            return new Response('Erreur lors de la création du paiement.', Response::HTTP_INTERNAL_SERVER_ERROR);
         }
 
-        return $this->json(['error' => 'Payment creation failed'], 500);
+        // Assure-toi d'envoyer l'utilisateur vers l'URL PayPal pour finaliser le paiement
+        return $this->redirect($response->result->links[1]->href);  // Lien pour rediriger vers PayPal
     }
 
-    #[Route('/paypal/success', name: 'paypal_success')]
-    public function success(Request $request, PayPalService $paypalService)
+    #[Route('/paypal/execute/{orderId}', name: 'paypal_execute')]
+    public function executePayment($orderId): Response
     {
-        $paymentId = $request->query->get('paymentId');
-        $payerId = $request->query->get('PayerID');
+        $response = $this->payPalService->executePayment($orderId);
 
-        // Vérifier que les identifiants sont présents
-        if (!$paymentId || !$payerId) {
-            return $this->redirectToRoute('homepage');
+        if ($response === null) {
+            return new Response('Erreur lors de l\'exécution du paiement.', Response::HTTP_INTERNAL_SERVER_ERROR);
         }
 
-        try {
-            // Exécuter le paiement
-            $payment = $paypalService->executePayment($paymentId, $payerId);
-            return $this->json(['status' => 'success', 'details' => $payment]);
-        } catch (\Exception $e) {
-            // Gestion des erreurs de l'exécution du paiement
-            return $this->json(['error' => $e->getMessage()], 500);
-        }
-    }
-
-    #[Route('/paypal/cancel', name: 'paypal_cancel')]
-    public function cancel()
-    {
-        return $this->json(['status' => 'cancelled']);
+        return new Response('Paiement exécuté avec succès!');
     }
 }
-?>

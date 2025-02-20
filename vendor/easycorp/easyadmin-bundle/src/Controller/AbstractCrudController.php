@@ -387,7 +387,7 @@ abstract class AbstractCrudController extends AbstractController implements Crud
             return $event->getResponse();
         }
 
-        if (null !== $referrer = $context->getReferrer()) {
+        if (null !== $referrer = $context->getRequest()->headers->get('referer')) {
             return $this->redirect($referrer);
         }
 
@@ -450,7 +450,8 @@ abstract class AbstractCrudController extends AbstractController implements Crud
             return $event->getResponse();
         }
 
-        return $this->redirect($batchActionDto->getReferrerUrl());
+        // resetting the page number is needed because after deleting some entities, the pagination will change
+        return $this->redirect($this->container->get(AdminUrlGenerator::class)->setAction(Action::INDEX)->set(EA::PAGE, 1)->generateUrl());
     }
 
     public function autocomplete(AdminContext $context): JsonResponse
@@ -638,7 +639,7 @@ abstract class AbstractCrudController extends AbstractController implements Crud
                 ->setAction(Action::EDIT)
                 ->setEntityId($context->getEntity()->getPrimaryKeyValue())
                 ->generateUrl(),
-            Action::SAVE_AND_RETURN => $context->getReferrer()
+            Action::SAVE_AND_RETURN => $context->getRequest()->headers->get('referer')
                 ?? $this->container->get(AdminUrlGenerator::class)->setAction(Action::INDEX)->generateUrl(),
             Action::SAVE_AND_ADD_ANOTHER => $this->container->get(AdminUrlGenerator::class)->setAction(Action::NEW)->generateUrl(),
             default => $this->generateUrl($context->getDashboardRouteName()),

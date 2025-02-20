@@ -1,12 +1,9 @@
 <?php
 namespace App\Service;
 
-use PayPalCheckoutSdk\Core\ApiContext;
-use PayPalCheckoutSdk\Core\PayPalHttpClient;
-use PayPalCheckoutSdk\Core\SandboxEnvironment;
-use PayPalCheckoutSdk\Core\ProductionEnvironment;
-use PayPalCheckoutSdk\Payments\OrdersCreateRequest;
-use PayPalCheckoutSdk\Payments\OrdersCaptureRequest;
+use PayPalHttpClient;
+use PayPal\Orders\OrdersCreateRequest;
+use PayPal\Orders\OrdersCaptureRequest;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use Psr\Log\LoggerInterface;
 
@@ -19,18 +16,14 @@ class PayPalService
     {
         $clientId = $params->get('PAYPAL_CLIENT_ID');
         $clientSecret = $params->get('PAYPAL_SECRET');
-        $mode = $params->get('PAYPAL_MODE'); // 
+        $mode = $params->get('PAYPAL_MODE'); // "sandbox" or "live"
 
-        // Vérification des variables d'environnement
         if (empty($clientId) || empty($clientSecret)) {
-            throw new \Exception('PayPal client ID or secret not configured correctly.');
+            throw new \Exception('PayPal client ID or secret is missing.');
         }
 
-        $environment = $mode === 'live'
-            ? new ProductionEnvironment($clientId, $clientSecret)
-            : new SandboxEnvironment($clientId, $clientSecret);
-
-        $this->client = new PayPalHttpClient($environment);
+        // Utilisation des clés d'API directement dans les requêtes
+        $this->client = new PayPalHttpClient($clientId, $clientSecret);
         $this->logger = $logger;
     }
 
@@ -39,6 +32,7 @@ class PayPalService
         $request = new OrdersCreateRequest();
         $request->prefer('return=representation');
 
+        // Construction du corps de la requête de paiement pour PayPal
         $request->body = [
             'intent' => 'CAPTURE',
             'purchase_units' => [[
@@ -54,31 +48,27 @@ class PayPalService
         ];
 
         try {
+            // Exécution de la requête pour créer le paiement
             $response = $this->client->execute($request);
             return $response;
         } catch (\Exception $ex) {
             $this->logger->error('Error creating PayPal payment: ' . $ex->getMessage());
-            return 'Error: ' . $ex->getMessage();
+            return null;
         }
     }
 
-    public function executePayment($paymentId, $payerId)
+    public function executePayment($orderId)
     {
-        $request = new OrdersCaptureRequest($paymentId);
+        $request = new OrdersCaptureRequest($orderId);
         $request->prefer('return=representation');
 
         try {
+            // Exécution de la requête de capture de paiement
             $response = $this->client->execute($request);
             return $response;
         } catch (\Exception $ex) {
             $this->logger->error('Error executing PayPal payment: ' . $ex->getMessage());
-            return 'Error: ' . $ex->getMessage();
+            return null;
         }
     }
-
-    public function getApiContext(): PayPalHttpClient
-    {
-        return $this->client;
-    }
 }
-?>

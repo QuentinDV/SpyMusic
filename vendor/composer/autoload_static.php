@@ -507,6 +507,13 @@ class ComposerStaticInit74ab73114a599f4a2997b6a284f9e273
                 0 => __DIR__ . '/..' . '/php-jsonpointer/php-jsonpointer/src',
             ),
         ),
+        'P' => 
+        array (
+            'PayPal' => 
+            array (
+                0 => __DIR__ . '/..' . '/paypal/rest-api-sdk-php/lib',
+            ),
+        ),
     );
 
     public static $classMap = array (

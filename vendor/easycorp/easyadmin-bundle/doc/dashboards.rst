@@ -1059,7 +1059,7 @@ applications can rely on its default values:
 
     class SecurityController extends AbstractController
     {
-        #[Route("/login", name="login")]
+        #[Route("/login", name: "login")]
         public function login(AuthenticationUtils $authenticationUtils): Response
         {
             $error = $authenticationUtils->getLastAuthenticationError();
