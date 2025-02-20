@@ -1,50 +1,75 @@
 <?php
+
 namespace App\Controller;
 
+use App\Entity\Cart;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Stripe\Stripe;
 use Stripe\PaymentIntent;
+use Symfony\Bundle\SecurityBundle\Security;
 
 class StripeController extends AbstractController
 {
+    private EntityManagerInterface $entityManager;
+    private Security $security;
+
+    public function __construct(EntityManagerInterface $entityManager, Security $security)
+    {
+        $this->entityManager = $entityManager;
+        $this->security = $security;
+    }
+
     #[Route('/payment', name: 'stripe_payment')]
     public function createPaymentIntent(Request $request): Response
     {
-        $amount = $request->get('amount');  // Get the amount from the URL parameter (in cents)
+        $user = $this->security->getUser();
 
-        // Set your secret key for Stripe API (use the correct one for production)
-        Stripe::setApiKey('your_stripe_secret_key');
+        if (!$user) {
+            return $this->redirectToRoute('login');
+        }
+
+        // Récupérer le total du panier
+        $cartItems = $this->entityManager->getRepository(Cart::class)->findBy(['user' => $user]);
+        $totalAmount = 0;
+
+        foreach ($cartItems as $item) {
+            $totalAmount += $item->getQuantity() * $item->getProduct()->getPrice(); // Assure-toi que `getProduct()->getPrice()` existe
+        }
+
+        if ($totalAmount <= 0) {
+            return new Response('Le panier est vide', Response::HTTP_BAD_REQUEST);
+        }
+
+        Stripe::setApiKey($_ENV['STRIPE_SECRET_KEY']); // Sécurité renforcée
 
         try {
-            // Create a PaymentIntent with the amount and currency
             $paymentIntent = PaymentIntent::create([
-                'amount' => $amount,
-                'currency' => 'usd', // Set your currency here
+                'amount' => $totalAmount * 100, // Stripe fonctionne en centimes
+                'currency' => 'eur', // Modifier en fonction de la région
             ]);
 
             return $this->render('payment/payment.html.twig', [
                 'clientSecret' => $paymentIntent->client_secret,
+                'totalAmount' => $totalAmount,
             ]);
         } catch (\Exception $e) {
-            // Handle errors (e.g., log error, display error message)
-            return new Response('Error creating payment intent: ' . $e->getMessage());
+            return new Response('Erreur lors de la création du paiement : ' . $e->getMessage());
         }
     }
 
     #[Route('/payment/success', name: 'stripe_payment_success')]
     public function paymentSuccess(): Response
     {
-        // Handle post-payment success logic (e.g., update order status, thank user)
         return $this->render('payment/success.html.twig');
     }
 
     #[Route('/payment/failure', name: 'stripe_payment_failure')]
     public function paymentFailure(): Response
     {
-        // Handle post-payment failure logic (e.g., show error message)
         return $this->render('payment/failure.html.twig');
     }
 }
