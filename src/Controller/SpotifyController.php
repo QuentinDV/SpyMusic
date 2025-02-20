@@ -151,10 +151,25 @@ class SpotifyController extends AbstractController
     #[Route("/spotify/recommendations", name: "spotify_recommendations")]
     public function recommendations(Request $request): Response
     {
-        $accessToken = $request->getSession()->get('spotify_access_token');
+        // Récupérer l'utilisateur connecté
+        $user = $this->security->getUser();
+
+        if (!$user) {
+            return $this->redirectToRoute('login');
+        }
+
+        $accessToken = $user->getAccessTokenDb();
+        $refreshToken = $user->getRefreshToken();
+
+        if (!$refreshToken) {
+            return $this->redirectToRoute('spotify');
+        }
+
+        $this->spotifyAuth->getValidAccessToken($accessToken, $refreshToken);
+        $accessToken = $user->getAccessTokenDb();
     
         if (!$accessToken) {
-            return $this->json(['error' => 'No access token'], Response::HTTP_UNAUTHORIZED);
+            return $this->redirectToRoute('spotify');
         }
     
         try {
@@ -202,9 +217,23 @@ class SpotifyController extends AbstractController
     #[Route("/myalbums", name: "spotify_albums")]
     public function getAlbums(Request $request): Response
     {
-        $session = $request->getSession();
-        $accessToken = $session->get('spotify_access_token');
+        // Récupérer l'utilisateur connecté
+        $user = $this->security->getUser();
 
+        if (!$user) {
+            return $this->redirectToRoute('login');
+        }
+
+        $accessToken = $user->getAccessTokenDb();
+        $refreshToken = $user->getRefreshToken();
+
+        if (!$refreshToken) {
+            return $this->redirectToRoute('spotify');
+        }
+
+        $this->spotifyAuth->getValidAccessToken($accessToken, $refreshToken);
+        $accessToken = $user->getAccessTokenDb();
+    
         if (!$accessToken) {
             return $this->redirectToRoute('spotify');
         }
@@ -228,7 +257,22 @@ class SpotifyController extends AbstractController
     #[Route("/spotify/genre/{genre}", name: "spotify_genre")]
 public function genrePage(Request $request, string $genre): Response
 {
-    $accessToken = $request->getSession()->get('spotify_access_token');
+    // Récupérer l'utilisateur connecté
+    $user = $this->security->getUser();
+
+    if (!$user) {
+        return $this->redirectToRoute('login');
+    }
+
+    $accessToken = $user->getAccessTokenDb();
+    $refreshToken = $user->getRefreshToken();
+
+    if (!$refreshToken) {
+        return $this->redirectToRoute('spotify');
+    }
+
+    $this->spotifyAuth->getValidAccessToken($accessToken, $refreshToken);
+    $accessToken = $user->getAccessTokenDb();
 
     if (!$accessToken) {
         return $this->redirectToRoute('spotify');
@@ -301,11 +345,6 @@ public function genrePage(Request $request, string $genre): Response
 
         $this->spotifyAuth->getValidAccessToken($accessToken, $refreshToken);
         $accessToken = $user->getAccessTokenDb();
-    
-        if (!$accessToken) {
-            return $this->redirectToRoute('spotify');
-        }
-        $accessToken = $request->getSession()->get('spotify_access_token');
     
         if (!$accessToken) {
             return $this->redirectToRoute('spotify');
