@@ -1,3 +1,29 @@
-{# templates/profile/index.html.twig #}
-<h1>Mon profil</h1>
-<p>Bienvenue sur votre page de profil.</p>
+{% extends 'base.html.twig' %}
+
+{% block title %}My Profile{% endblock %}
+
+{% block body %}
+    <div class="container-fluid" style="background-color: #000000; min-height: 100vh; display: flex; justify-content: center; align-items: center; color: white;">
+        <div class="row justify-content-center align-items-center w-100">
+            <div class="col-md-8">
+                <div class="card shadow-lg">
+                    <div class="card-header bg-primary text-white text-center">
+                        <h2>My Profile</h2>
+                    </div>
+                    <div class="card-body bg-light text-dark">
+                        <p class="text-center">Welcome to your profile page, <strong>{{ app.user.username }}</strong>!</p>
+
+                        <ul class="list-group">
+                            <li class="list-group-item"><strong>Email:</strong> {{ app.user.email }}</li>
+                            <li class="list-group-item"><strong>Role:</strong> {{ app.user.roles|join(', ') }}</li>
+                        </ul>
+                        
+                        <div class="text-center mt-4">
+                            <a href="{{ path('logout') }}" class="btn btn-danger">Logout</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
