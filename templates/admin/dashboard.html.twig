@@ -1,0 +1,18 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Dashboard{% endblock %}
+
+{% block body %}
+    <div class="container">
+        <h1>Bienvenue sur le Dashboard d'Admin</h1>
+
+        <div class="alert alert-info">
+            Bienvenue, {{ app.user.username }} ! Vous êtes connecté en tant qu'administrateur.
+        </div>
+
+        <div>
+            <h2>Gestion des utilisateurs</h2>
+            <p>Vous pouvez gérer les utilisateurs ici.</p>
+        </div>
+    </div>
+{% endblock %}

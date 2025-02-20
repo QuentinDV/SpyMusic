@@ -17,7 +17,7 @@ class LoginController extends AbstractController
         // Dernier email saisi par l'utilisateur
         $lastUsername = $authenticationUtils->getLastUsername();
 
-        return $this->render('security/login.html.twig', [
+        return $this->render('home/login.html.twig', [
             'last_username' => $lastUsername,
             'error' => $error,
         ]);
@@ -29,3 +29,5 @@ class LoginController extends AbstractController
         throw new \LogicException('This should never be reached.');
     }
 }
+
+

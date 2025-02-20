@@ -5,11 +5,11 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
-class DashboardController extends AbstractController
+class ProfileController extends AbstractController
 {
-    #[Route('/', name: 'home')]
+    #[Route('/profile', name: 'profile')]
     public function index(): Response
     {
-        return $this->render('home/index.html');
+        return $this->render('profile/index.html.twig');
     }
 }

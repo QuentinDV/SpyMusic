@@ -8,17 +8,9 @@ dashboard:
   path: /admin
   controller: App\Controller\Admin\DashboardController::index
 
-# routes.yaml
 login:
   path: /login
   controller: App\Controller\SecurityController::login
 
 logout:
-  path: /logout
-
-app_login:
-  path: /login
-  controller: App\Controller\SecurityController::login
-
-app_logout:
   path: /logout

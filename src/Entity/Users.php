@@ -135,8 +135,15 @@ class Users implements UserInterface, PasswordAuthenticatedUserInterface
 
     // Implémentation des rôles (méthode exigée par UserInterface)
     public function getRoles(): array
-    {
-        return [$this->role === 'admin' ? 'ROLE_ADMIN' : 'ROLE_USER'];
+{
+    // Si l'utilisateur a le rôle 'admin', attribuer 'ROLE_ADMIN', sinon attribuer 'ROLE_USER'
+    if ($this->role === 'admin') {
+        return ['ROLE_ADMIN'];
+    } elseif ($this->role === 'client') {
+        return ['ROLE_USER'];
     }
 
+    // Retourne un tableau vide ou un rôle par défaut si aucun des rôles définis n'est trouvé
+    return [];
+}
 }

@@ -1,0 +1,7 @@
+easy_admin:
+  entities:
+    - App\Entity\YourEntity
+  dashboard:
+    title: "Admin Dashboard"
+    route:
+      name: "admin_dashboard"
