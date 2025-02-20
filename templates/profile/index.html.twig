@@ -81,15 +81,45 @@
     .btn-danger:hover {
         background-color: #c62828; /* Rouge plus foncé au survol */
     }
+
+      .home-link {
+        position: relative;
+        display: inline-block;
+        margin-bottom: 20px;
+        color: #1DB954;
+        font-weight: bold;
+        font-size: 1rem;
+        text-decoration: none;
+    }
+    .home-link::after {
+        content: "";
+        position: absolute;
+        left: 0;
+        bottom: -3px;
+        width: 100%;
+        height: 2px;
+        background-color: #1DB954;
+        transform: scaleX(0);
+        transform-origin: left;
+        transition: transform 0.3s ease-in-out;
+    }
+    .home-link:hover::after {
+        transform: scaleX(1);
+    }
 </style>
 {% endblock %}
 
 {% block body %}
+
     <div class="container-fluid">
+                 <div class="home-container">
+            <a href="/home">🏠 Accueil</a>
+    </div>
         <div class="card shadow-lg">
             <div class="card-header">
                 <h2>My Profile</h2>
             </div>
+ 
             <div class="card-body">
                 <p class="text-center">Welcome to your profile page, <strong>{{ app.user.username }}</strong>!</p>
 

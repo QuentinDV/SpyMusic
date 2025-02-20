@@ -26,10 +26,33 @@
         border-radius: 10px;
         text-align: center;
         margin-bottom: 20px;
+        position: relative;
     }
     .banner p {
         font-size: 1.2rem;
     }
+
+    /* 🔹 Style des boutons Profil & Panier */
+    .banner-buttons {
+        margin-top: 15px;
+        display: flex;
+        justify-content: center;
+        gap: 15px;
+    }
+    .btn-banner {
+        display: inline-block;
+        padding: 10px 20px;
+        background: #1DB954;
+        color: white;
+        font-weight: bold;
+        border-radius: 20px;
+        text-decoration: none;
+        transition: background 0.3s ease;
+    }
+    .btn-banner:hover {
+        background: #18a848;
+    }
+
     .search-bar {
         width: 100%;
         padding: 10px;
@@ -102,7 +125,6 @@
         font-size: 1rem;
         text-decoration: none;
     }
-
     .home-link::after {
         content: "";
         position: absolute;
@@ -115,21 +137,17 @@
         transform-origin: left;
         transition: transform 0.3s ease-in-out;
     }
-
     .home-link:hover::after {
         transform: scaleX(1);
     }
-
     .album-link {
-    text-decoration: none; /* Empêche le soulignement par défaut */
-    color: inherit; /* Conserve la couleur du texte sans modification */
-}
-
-.album-link:hover {
-    color: inherit; /* Garde la couleur du texte inchangée au survol */
-    cursor: pointer; /* Change le curseur pour un effet de clic */
-}
-
+        text-decoration: none;
+        color: inherit;
+    }
+    .album-link:hover {
+        color: inherit;
+        cursor: pointer;
+    }
 </style>
 {% endblock %}
 
@@ -138,7 +156,15 @@
         <div class="banner">
             <h1>🎵 Bienvenue sur SpyMusic</h1>
             <p>Achetez Vos Projets Préférés De Vos Artistes Préférés !</p>
+
+            <!-- 🔹 Boutons Profil & Panier -->
+            <div class="banner-buttons">
+                <a href="{{ path('profile') }}" class="btn-banner">👤 Profil</a>
+                <a href="{{ path('app_shopping_cart') }}" class="btn-banner">🛒 Panier</a>
+            </div>
         </div>
+
+        
 
         <h2>🔍 Rechercher un album</h2>
         <input type="text" id="globalSearchInput" class="search-bar" placeholder="Entrez un album...">
