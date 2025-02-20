@@ -1,74 +1,77 @@
 <?php
+// src/Service/PayPalService.php
+
 namespace App\Service;
 
-use PayPalHttpClient;
-use PayPal\Orders\OrdersCreateRequest;
-use PayPal\Orders\OrdersCaptureRequest;
-use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
-use Psr\Log\LoggerInterface;
+use PayPalCheckoutSdk\Core\SandboxEnvironment;
+use PayPalCheckoutSdk\Core\PayPalHttpClient;
+use PaypalServerSdkLib\Request\Orders\OrdersCreateRequest;
+use PaypalServerSdkLib\Request\Orders\OrdersCaptureRequest;
 
 class PayPalService
 {
-    private PayPalHttpClient $client;
-    private LoggerInterface $logger;
+    private $clientId;
+    private $clientSecret;
+    private $environment;
+    private $client;
 
-    public function __construct(ParameterBagInterface $params, LoggerInterface $logger)
+    public function __construct(string $clientId, string $clientSecret, string $mode = 'sandbox')
     {
-        $clientId = $params->get('PAYPAL_CLIENT_ID');
-        $clientSecret = $params->get('PAYPAL_SECRET');
-        $mode = $params->get('PAYPAL_MODE'); // "sandbox" or "live"
+        $this->clientId = $clientId;
+        $this->clientSecret = $clientSecret;
 
-        if (empty($clientId) || empty($clientSecret)) {
-            throw new \Exception('PayPal client ID or secret is missing.');
+        // Configure the environment (sandbox or live)
+        if ($mode === 'sandbox') {
+            $this->environment = new SandboxEnvironment($this->clientId, $this->clientSecret);
+        } else {
+            throw new \Exception('Mode not supported.');
         }
 
-        // Utilisation des clés d'API directement dans les requêtes
-        $this->client = new PayPalHttpClient($clientId, $clientSecret);
-        $this->logger = $logger;
+        // Create the PayPal HTTP client
+        $this->client = new PayPalHttpClient($this->environment);
     }
 
-    public function createPayment($amount, $currency = 'USD')
+    public function createPayment(float $amount, string $currency, string $returnUrl, string $cancelUrl)
     {
+        // Create a request to set up the payment
         $request = new OrdersCreateRequest();
         $request->prefer('return=representation');
-
-        // Construction du corps de la requête de paiement pour PayPal
         $request->body = [
             'intent' => 'CAPTURE',
+            'application_context' => [
+                'return_url' => $returnUrl,
+                'cancel_url' => $cancelUrl,
+            ],
             'purchase_units' => [[
                 'amount' => [
                     'currency_code' => $currency,
                     'value' => $amount,
                 ],
             ]],
-            'application_context' => [
-                'return_url' => "http://127.0.0.1:8000/payment/execute",
-                'cancel_url' => "http://127.0.0.1:8000/payment/cancel",
-            ]
         ];
 
         try {
-            // Exécution de la requête pour créer le paiement
+            // Execute the request
             $response = $this->client->execute($request);
             return $response;
-        } catch (\Exception $ex) {
-            $this->logger->error('Error creating PayPal payment: ' . $ex->getMessage());
-            return null;
+        } catch (\Exception $e) {
+            throw new \Exception("Error creating payment: " . $e->getMessage());
         }
     }
 
-    public function executePayment($orderId)
+    public function executePayment(string $orderId)
     {
+        // Create a request to capture the payment
         $request = new OrdersCaptureRequest($orderId);
         $request->prefer('return=representation');
 
         try {
-            // Exécution de la requête de capture de paiement
+            // Execute the request
             $response = $this->client->execute($request);
             return $response;
-        } catch (\Exception $ex) {
-            $this->logger->error('Error executing PayPal payment: ' . $ex->getMessage());
-            return null;
+        } catch (\Exception $e) {
+            throw new \Exception("Error executing payment: " . $e->getMessage());
         }
     }
 }
+?>

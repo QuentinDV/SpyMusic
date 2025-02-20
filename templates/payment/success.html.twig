@@ -1,0 +1,7 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <h1>Paiement réussi !</h1>
+    <p>Merci pour votre achat.</p>
+    <pre>{{ payment|json_encode(constant('JSON_PRETTY_PRINT')) }}</pre>
+{% endblock %}
