@@ -1,27 +1,105 @@
-{% extends 'base.html.twig' %}
+{% block stylesheets %}
+<style>
+    /* Général : couleur de fond et texte */
+    body {
+        background-color: #121212; /* Fond noir pour la page */
+        color: black; /* Texte blanc */
+        font-family: Arial, sans-serif;
+        height: 100vh;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        margin: 0;
+    }
 
-{% block title %}My Profile{% endblock %}
+    /* Conteneur pour la carte du profil */
+    .container-fluid {
+        width: 100%;
+        max-width: 600px;
+        padding: 30px;
+        border-radius: 10px;
+        background-color: #ffffff; /* Fond blanc pour la carte */
+        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+    }
+
+    /* Entête de la carte */
+    .card-header {
+        background-color: #28a745; /* Vert de fond */
+        text-align: center;
+        padding: 20px;
+        border-radius: 10px 10px 0 0;
+        color: white;
+    }
+
+    /* Corps de la carte */
+    .card-body {
+        background-color: #f8f9fa; /* Fond gris clair pour le corps */
+        padding: 20px;
+        border-radius: 0 0 10px 10px;
+    }
+
+    h2 {
+        margin-bottom: 20px;
+    }
+
+    /* Élément de la liste */
+    .list-group-item {
+        padding: 12px 15px;
+        margin-bottom: 10px;
+        background-color: #e9ecef; /* Fond clair pour les éléments de la liste */
+        border: 1px solid #ddd;
+        border-radius: 5px;
+    }
+
+    /* Bouton vert (Déconnexion) */
+    .btn-success {
+        background-color: #28a745; /* Vert */
+        color: white; /* Texte blanc */
+        padding: 12px 30px;
+        border-radius: 10px;
+        font-size: 16px;
+        margin-top: 20px;
+        text-align: center;
+        transition: background-color 0.3s ease;
+    }
+
+    .btn-success:hover {
+        background-color: #218838; /* Vert plus foncé au survol */
+    }
+
+    /* Bouton rouge (Déconnexion) */
+    .btn-danger {
+        background-color: #e63946; /* Rouge */
+        color: white;
+        padding: 12px 30px;
+        border-radius: 10px;
+        font-size: 16px;
+        margin-top: 20px;
+        transition: background-color 0.3s ease;
+    }
+
+    .btn-danger:hover {
+        background-color: #c62828; /* Rouge plus foncé au survol */
+    }
+</style>
+{% endblock %}
 
 {% block body %}
-    <div class="container-fluid" style="background-color: #000000; min-height: 100vh; display: flex; justify-content: center; align-items: center; color: white;">
-        <div class="row justify-content-center align-items-center w-100">
-            <div class="col-md-8">
-                <div class="card shadow-lg">
-                    <div class="card-header bg-primary text-white text-center">
-                        <h2>My Profile</h2>
-                    </div>
-                    <div class="card-body bg-light text-dark">
-                        <p class="text-center">Welcome to your profile page, <strong>{{ app.user.username }}</strong>!</p>
+    <div class="container-fluid">
+        <div class="card shadow-lg">
+            <div class="card-header">
+                <h2>My Profile</h2>
+            </div>
+            <div class="card-body">
+                <p class="text-center">Welcome to your profile page, <strong>{{ app.user.username }}</strong>!</p>
 
-                        <ul class="list-group">
-                            <li class="list-group-item"><strong>Email:</strong> {{ app.user.email }}</li>
-                            <li class="list-group-item"><strong>Role:</strong> {{ app.user.roles|join(', ') }}</li>
-                        </ul>
-                        
-                        <div class="text-center mt-4">
-                            <a href="{{ path('logout') }}" class="btn btn-danger">Logout</a>
-                        </div>
-                    </div>
+                <ul class="list-group">
+                    <li class="list-group-item"><strong>Email:</strong> {{ app.user.email }}</li>
+                    <li class="list-group-item"><strong>Role:</strong> {{ app.user.roles|join(', ') }}</li>
+                </ul>
+
+                <div class="text-center">
+                    <a href="{{ path('logout') }}" class="btn btn-danger">Logout</a>
                 </div>
             </div>
         </div>
