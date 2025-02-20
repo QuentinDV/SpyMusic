@@ -27,3 +27,7 @@ services:
       - "../src/DependencyInjection/"
       - "../src/Entity/"
       - "../src/Kernel.php"
+
+  Symfony\Component\ErrorHandler\ErrorHandler:
+    public: true
+    arguments: ["@twig"]
