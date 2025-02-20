@@ -62,7 +62,7 @@ class SpotifyAuth
 
     
 
-    public function getValidAccessToken(string $accessToken, ?string $refreshToken): string
+    public function getValidAccessToken(string $accessToken, string $refreshToken): void
     {
         // Vérifier si l'access token fonctionne
         $response = $this->client->request('GET', 'https://api.spotify.com/v1/me', [
@@ -71,13 +71,19 @@ class SpotifyAuth
             ],
         ]);
 
-        if ($response->getStatusCode() === 401 && $refreshToken) { 
-            // Token expiré, on le rafraîchit
-            return $this->refreshAccessToken($refreshToken);
-        }
+        // Token expiré, on le rafraîchit
+        $acces_token = $this->refreshAccessToken($refreshToken);
 
-        // Le token est valide, on le retourne
-        return $accessToken;
+        // Récupérer l'utilisateur connecté
+        $user = $this->security->getUser();
+
+        // Mettre à jour les tokens
+        $user->setAccessTokenDb($acces_token);
+
+        // Sauvegarder dans la base de données
+        $this->entityManager->persist($user);
+        $this->entityManager->flush();
+        
     }
 
     public function refreshAccessToken(string $refreshToken): string
