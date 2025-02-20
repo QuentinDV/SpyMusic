@@ -18,9 +18,11 @@ class Cart
     #[ORM\JoinColumn(name: 'user_id', referencedColumnName: 'user_id', nullable: false, onDelete: 'CASCADE')]
     private ?Users $user = null;    
 
-    #[ORM\ManyToOne(targetEntity: Products::class)]
-    #[ORM\JoinColumn(name: 'product_id', referencedColumnName: 'product_id', nullable: false, onDelete: 'CASCADE')]
-    private ?Products $product = null;
+    #[ORM\Column(length: 255)]
+    private ?string $albumId = null;
+
+    #[ORM\Column(length: 20)]
+    private ?string $type = null;
 
     #[ORM\Column(type: 'integer', options: ['default' => 1])]
     private int $quantity = 1;
@@ -57,16 +59,30 @@ class Cart
         return $this;
     }
 
-    // Getters pour product
-    public function getProduct(): ?Products
+    // Getters pour albumId
+    public function getAlbumId(): ?string
     {
-        return $this->product;
+        return $this->albumId;
     }
 
-    // Setters pour product
-    public function setProduct(?Products $product): self
+    // Setters pour albumId
+    public function setAlbumId(string $albumId): self
     {
-        $this->product = $product;
+        $this->albumId = $albumId;
+
+        return $this;
+    }
+
+    // Getters pour type
+    public function getType(): ?string
+    {
+        return $this->type;
+    }
+
+    // Setters pour type
+    public function setType(string $type): self
+    {
+        $this->type = $type;
 
         return $this;
     }

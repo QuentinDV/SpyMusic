@@ -124,6 +124,105 @@
     .btn-back:hover {
         background: #777;
     }
+
+    .product-container {
+        display: flex;
+        gap: 20px;
+        margin-top: 30px;
+        justify-content: center;
+    }
+
+    .product-panel {
+        background: #181818;
+        display: flex;
+        align-items: center;
+        gap: 15px;
+        padding: 20px;
+        border-radius: 15px;
+        box-shadow: 0px 5px 15px rgba(255, 255, 255, 0.1);
+        width: 45%;
+    }
+
+    .product-image {
+        width: 120px;
+        border-radius: 10px;
+    }
+
+    .product-info {
+        flex: 1;
+        text-align: left;
+    }
+
+    .product-info h2 {
+        color: #1DB954;
+        margin-bottom: 10px;
+    }
+
+    .quantity {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin: 10px 0;
+    }
+
+    .quantity-btn {
+        background: #1DB954;
+        color: white;
+        border: none;
+        padding: 5px 10px;
+        border-radius: 5px;
+        cursor: pointer;
+        font-size: 1rem;
+    }
+
+    .quantity-btn:hover {
+        background: #18a848;
+    }
+
+    .add-to-cart {
+        display: block;
+        margin-top: 10px;
+        padding: 8px 15px;
+        background: #1DB954;
+        color: white;
+        border-radius: 20px;
+        text-decoration: none;
+        font-weight: bold;
+        border: none;
+        cursor: pointer;
+        transition: background 0.3s ease;
+    }
+
+    .add-to-cart:hover {
+        background: #18a848;
+    }
+    .home-container a {
+        position: relative;
+        text-decoration: none;
+        color: #1DB954;
+        font-weight: bold;
+        font-size: 1rem;
+        display: inline-block;
+        margin-bottom: 20px;
+    }
+
+    .home-container a::after {
+        content: "";
+        position: absolute;
+        left: 0;
+        bottom: -3px;
+        width: 100%;
+        height: 2px;
+        background-color: #1DB954;
+        transform: scaleX(0);
+        transform-origin: left;
+        transition: transform 0.3s ease-in-out;
+    }
+
+    .home-container a:hover::after {
+        transform: scaleX(1);
+    }
+
 </style>
 {% endblock %}
 
@@ -138,6 +237,49 @@
             <p><strong>📅 Sortie :</strong> {{ album.release_date }}</p>
             <p><strong>🎵 Nombre de pistes :</strong> {{ album.total_tracks }}</p>
             <a href="{{ album.external_urls.spotify }}" target="_blank" class="btn-spotify">🎧 Écouter sur Spotify</a>
+        </div>
+    </div>
+
+    <!-- Formulaire d'ajout au panier -->
+    <div class="product-container">
+        <!-- Formulaire pour CD -->
+        <div class="product">
+            <img src="{{ album.images[0].url }}" alt="CD - {{ album.name }}" class="product-image">
+            <div class="product-info">
+                <h2>💿 CD</h2>
+                <p>Édition standard CD.</p>
+                {% if form_cd is defined %}
+                    {{ form_start(form_cd, { 'action': path('cart_add'), 'attr': {'class': 'cart-form'} }) }}
+                        {{ form_widget(form_cd.albumId) }}
+                        {{ form_widget(form_cd.type) }}
+                        <label for="{{ form_cd.quantity.vars.id }}">Quantité :</label>
+                        {{ form_widget(form_cd.quantity, { 'attr': {'min': 1} }) }}
+                        <button type="submit" class="add-to-cart">🛒 Ajouter au panier</button>
+                    {{ form_end(form_cd) }}
+                {% else %}
+                    <p>Erreur : formulaire CD non disponible.</p>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- Formulaire pour Vinyle -->
+        <div class="product">
+            <img src="{{ album.images[0].url }}" alt="Vinyle - {{ album.name }}" class="product-image">
+            <div class="product-info">
+                <h2>💿 Vinyle</h2>
+                <p>Édition standard Vinyle.</p>
+                {% if form_vinyle is defined %}
+                    {{ form_start(form_vinyle, { 'action': path('cart_add'), 'attr': {'class': 'cart-form'} }) }}
+                        {{ form_widget(form_vinyle.albumId) }}
+                        {{ form_widget(form_vinyle.type) }}
+                        <label for="{{ form_vinyle.quantity.vars.id }}">Quantité :</label>
+                        {{ form_widget(form_vinyle.quantity, { 'attr': {'min': 1} }) }}
+                        <button type="submit" class="add-to-cart">🛒 Ajouter au panier</button>
+                    {{ form_end(form_vinyle) }}
+                {% else %}
+                    <p>Erreur : formulaire Vinyle non disponible.</p>
+                {% endif %}
+            </div>
         </div>
     </div>
 
@@ -165,8 +307,15 @@
             {% endfor %}
         </div>
     </div>
-
-    <!-- Bouton retour -->
-    <a href="{{ path('spotify_home') }}" class="btn-back">⬅ Retour à l'accueil</a>
 </div>
+<script>
+function updateQuantity(type, change) {
+    let quantityElement = document.getElementById(type + "-quantity");
+    let quantity = parseInt(quantityElement.innerText);
+    
+    quantity = Math.max(1, quantity + change); // Ne pas descendre en dessous de 1
+    quantityElement.innerText = quantity;
+}
+</script>
+
 {% endblock %}
