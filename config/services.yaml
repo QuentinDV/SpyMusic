@@ -8,6 +8,8 @@ parameters:
   PAYPAL_SECRET: "%env(PAYPAL_SECRET)%"
   PAYPAL_MODE: "%env(PAYPAL_MODE)%"
 
+  stripe_secret_key: "%env(STRIPE_SECRET_KEY)%"
+
 services:
   Symfony\Component\Security\Http\Authenticator\FormLoginAuthenticator: "@security.authenticator.form_login.main"
   App\Service\DeezerService:
@@ -27,6 +29,10 @@ services:
       - "../src/DependencyInjection/"
       - "../src/Entity/"
       - "../src/Kernel.php"
+
+  App\Service\StripeService:
+    arguments:
+      $secretKey: "%stripe_secret_key%" # StripeService gets the secret key from parameters
 
   Symfony\Component\ErrorHandler\ErrorHandler:
     public: true

@@ -13,6 +13,7 @@
         "easycorp/easyadmin-bundle": "^4.24",
         "paypal/paypal-server-sdk": "^0.6.1",
         "paypal/rest-api-sdk-php": "^1.6",
+        "stripe/stripe-php": "^16.5",
         "symfony/console": "7.2.*",
         "symfony/dotenv": "7.2.*",
         "symfony/flex": "^2",

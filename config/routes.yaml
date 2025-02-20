@@ -14,3 +14,11 @@ login:
 
 logout:
   path: /logout
+
+payment:
+  path: /payment
+  controller: App\Controller\PaymentController::payment
+
+payment_process:
+  path: /payment/process
+  controller: App\Controller\PaymentController::processPayment

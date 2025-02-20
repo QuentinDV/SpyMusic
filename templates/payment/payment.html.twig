@@ -1,0 +1,74 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Payment Page{% endblock %}
+
+{% block body %}
+    <div class="container mt-5">
+        <div class="row justify-content-center">
+            <div class="col-md-6">
+                <h2 class="text-center">Payment Information</h2>
+                
+                <!-- Display success or error messages -->
+                {% if app.session.flashbag.has('payment_success') %}
+                    <div class="alert alert-success">
+                        Payment was successful! Thank you for your purchase.
+                    </div>
+                {% elseif app.session.flashbag.has('payment_error') %}
+                    <div class="alert alert-danger">
+                        There was an error processing your payment. Please try again.
+                    </div>
+                {% endif %}
+
+                <!-- Stripe Payment Form -->
+                <form action="{{ path('payment_process') }}" method="POST" id="payment-form">
+                    <!-- Stripe Payment Fields -->
+                    <div class="form-group">
+                        <label for="card-element">Credit or Debit Card</label>
+                        <div id="card-element">
+                            <!-- A Stripe Element will be inserted here. -->
+                        </div>
+                    </div>
+
+                    <!-- Display error message for Stripe -->
+                    <div id="card-errors" role="alert"></div>
+
+                    <button type="submit" class="btn btn-primary mt-4">Submit Payment</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Include Stripe.js library -->
+    <script src="https://js.stripe.com/v3/"></script>
+
+    <script type="text/javascript">
+        // Stripe initialization
+        var stripe = Stripe('your-publishable-key-here');  // Replace with your own publishable key
+        var elements = stripe.elements();
+        var card = elements.create('card');  // Create a Stripe card element
+        card.mount('#card-element');  // Mount the card element into the DOM
+
+        // Handle form submission
+        var form = document.getElementById('payment-form');
+        form.addEventListener('submit', function(event) {
+            event.preventDefault();
+
+            stripe.createToken(card).then(function(result) {
+                if (result.error) {
+                    // Show error in the form
+                    var errorElement = document.getElementById('card-errors');
+                    errorElement.textContent = result.error.message;
+                } else {
+                    // Send the token to your server
+                    var tokenInput = document.createElement('input');
+                    tokenInput.setAttribute('type', 'hidden');
+                    tokenInput.setAttribute('name', 'stripeToken');
+                    tokenInput.setAttribute('value', result.token.id);
+                    form.appendChild(tokenInput);
+
+                    form.submit();  // Submit the form to process the payment
+                }
+            });
+        });
+    </script>
+{% endblock %}
