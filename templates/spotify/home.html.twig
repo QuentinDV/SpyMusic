@@ -189,6 +189,29 @@
         font-size: 1.5rem;
         margin-bottom: 15px;
     }
+    .library-container a {
+        position: relative;
+        text-decoration: none;
+        color: inherit;
+    }
+
+    .library-container a::after {
+        content: "";
+        position: absolute;
+        left: 0;
+        bottom: -3px;
+        width: 100%;
+        height: 2px;
+        background-color: #1DB954;
+        transform: scaleX(0);
+        transform-origin: left;
+        transition: transform 0.3s ease-in-out;
+    }
+
+    .library-container a:hover::after {
+        transform: scaleX(1);
+    }
+
     .rec-grid {
         display: grid;
         grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
@@ -256,7 +279,9 @@
 <div class="main-container">
     <!-- Sidebar - Bibliothèque -->
     <aside class="sidebar">
-        <h2>📚 Ma Bibliothèque</h2>
+        <div class="library-container">
+            <a href="/myalbums"><h2>📚 Ma Bibliothèque</h2></a>
+        </div>
         <input type="text" id="searchInput" class="search-bar" placeholder="🔍 Rechercher un album...">
         <ul class="album-list">
             {% for item in albums %}
