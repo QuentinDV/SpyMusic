@@ -105,7 +105,7 @@ class SpotifyController extends AbstractController
         ]);
     }
 
-    #[Route("/albums", name: "spotify_albums")]
+    #[Route("/myalbums", name: "spotify_albums")]
     public function getAlbums(Request $request): Response
     {
         

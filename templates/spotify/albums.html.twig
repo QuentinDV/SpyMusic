@@ -64,11 +64,43 @@
     .btn-spotify:hover {
         background: #18a848;
     }
+
+    .home-container a {
+        position: relative;
+        text-decoration: none;
+        color: #1DB954;
+        font-weight: bold;
+        font-size: 1rem;
+        display: inline-block;
+        margin-bottom: 20px;
+    }
+
+    .home-container a::after {
+        content: "";
+        position: absolute;
+        left: 0;
+        bottom: -3px;
+        width: 100%;
+        height: 2px;
+        background-color: #1DB954;
+        transform: scaleX(0);
+        transform-origin: left;
+        transition: transform 0.3s ease-in-out;
+    }
+
+    .home-container a:hover::after {
+        transform: scaleX(1);
+    }
+
+
 </style>
 {% endblock %}
 
 {% block body %}
     <div class="container">
+        <div class="home-container">
+            <a href="/home">🏠 Retour à l'accueil</a>
+        </div>
         <h1>🎶 Mes Albums Spotify</h1>
         <div class="album-container">
             {% for item in albums %}

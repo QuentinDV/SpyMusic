@@ -80,6 +80,29 @@
         margin: 0;
     }
 
+    .library-container a {
+        position: relative;
+        text-decoration: none;
+        color: inherit;
+    }
+
+    .library-container a::after {
+        content: "";
+        position: absolute;
+        left: 0;
+        bottom: -3px;
+        width: 100%;
+        height: 2px;
+        background-color: #1DB954;
+        transform: scaleX(0);
+        transform-origin: left;
+        transition: transform 0.3s ease-in-out;
+    }
+
+    .library-container a:hover::after {
+        transform: scaleX(1);
+    }
+
     /* ---- Catégories ---- */
     .categories {
         margin-top: 30px;
@@ -141,8 +164,9 @@
 {% block body %}
 <div class="main-container">
     <!-- Sidebar - Bibliothèque -->
-    <aside class="sidebar">
-        <h2>📚 Ma Bibliothèque</h2>
+    <aside class="sidebar">  
+        <div class="library-container">
+        <a href="/myalbums"><h2>📚 Ma Bibliothèque</h2></a> </div>
         <ul class="album-list">
             {% for item in albums %}
                 <li>
@@ -160,8 +184,8 @@
     <section class="content">
         <!-- Bannière de Bienvenue -->
         <div class="banner">
-            <h1>🎵 Bienvenue sur Spotify</h1>
-            <p>Découvrez de nouvelles musiques et écoutez vos albums préférés !</p>
+            <h1>🎵 Bienvenue sur SpyMusic</h1>
+            <p>Achetez Vos Projets Préférés De Vos Artistes Préférés !</p>
         </div>
 
         <!-- Catégories -->
