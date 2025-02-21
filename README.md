@@ -32,5 +32,46 @@ php bin/console doctrine:database:drop --force
 php bin/console doctrine:database:create
 php bin/console make:migration
 php bin/console doctrine:migrations:migrate
+```
 
+---
 
+## 🚀 Démarrer et arrêter le serveur Symfony
+
+**Démarrer le serveur :**  
+```bash
+symfony server:start
+```
+
+**Arrêter le serveur :**  
+```bash
+symfony server:stop
+```
+
+---
+
+## 🏗 Technologies utilisées
+
+🔹 **PHP 8+**  
+🔹 **Symfony 6**  
+🔹 **Doctrine ORM** (Gestion de la base de données)  
+🔹 **Stripe** (Paiement en ligne sécurisé)  
+🔹 **Spotify API** (Recommandations personnalisées)  
+🔹 **Symfony Security** (Authentification et gestion des utilisateurs)  
+🔹 **EasyAdmin** (Back-office pour la gestion des produits et utilisateurs)  
+🔹 **Mailtrap** (Envoi d'e-mails en développement)  
+
+---
+
+## 🎯 Fonctionnalités
+
+✔ Connexion avec un compte **Spotify** pour récupérer les préférences musicales.  
+✔ Recommandations de produits basées sur l'activité **Spotify**.  
+✔ Système d'**authentification** et gestion des utilisateurs.  
+✔ Intégration du paiement sécurisé avec **Stripe**.  
+✔ **Tableau de bord administrateur** avec **EasyAdmin**.  
+✔ Envoi de **notifications par e-mail** via **Mailtrap**.  
+
+---
+
+🔥 **Prêt à commencer ? Clonez le repo et suivez les instructions ci-dessus !**
